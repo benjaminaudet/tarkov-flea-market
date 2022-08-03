@@ -3,8 +3,8 @@ import { ptBR, datePtBR } from 'naive-ui'
 import { ApolloClients } from '@vue/apollo-composable'
 import { apolloClient } from './common/ApolloClient'
 import { isDark, preferredDark } from '~/common/composables'
-  import { darkTheme } from 'naive-ui'
-// https://v4.apollo.vuejs.org/
+import { darkTheme } from 'naive-ui'
+
 provide(ApolloClients, {
   default: apolloClient,
 })

@@ -8,17 +8,33 @@ const props = defineProps({
 </script>
 
 <template>
-  <n-space vertical>
-    <n-card bg="black" flex >
+  <n-space vertical v-if="!item">
+    <n-card bg="black" flex>
       <template #header align-center>
-        <img :src="item.iconLink" />
-        <div>{{ item.name }}</div>
+        <n-skeleton height="50px" width="50px" />
+        <n-skeleton text />
       </template>
-      <n-tabs type="line" size="large" :tabs-padding="20" pane-style="padding: 20px;">
-        <n-tab-pane name="PARKLIFE">
-          PARKLIFE
+      <n-tabs type="line" size="small" :tabs-padding="20" pane-style="padding: 20px;">
+        <n-tab-pane name="Price Stats">
+          <n-skeleton text />
         </n-tab-pane>
-        <n-tab-pane name="ROCKLIFE">
+        <n-tab-pane name="General Stats">
+          <n-skeleton text />
+        </n-tab-pane>
+      </n-tabs>
+    </n-card>
+  </n-space>
+  <n-space vertical v-else>
+    <n-card bg="black">
+      <template #header>
+        <img :src="item.iconLink" class="m-2/4" />
+        <div class="h-10 text-left">{{ item.name }}</div>
+      </template>
+      <n-tabs type="line" size="small" :tabs-padding="20" pane-style="padding: 20px;">
+        <n-tab-pane name="Price Stats">
+          Average Price 24h : {{ item.avg24hPrice }} roubles
+        </n-tab-pane>
+        <n-tab-pane name="General Stats">
           ROCKLIFE
         </n-tab-pane>
       </n-tabs>

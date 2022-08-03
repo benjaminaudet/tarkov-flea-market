@@ -3,7 +3,7 @@ module.exports = {
     service: {
       name: 'vitesse',
       // URL to the GraphQL API
-      url: 'https://api.spacex.land/graphql/',
+      url: 'https://api.tarkov.dev/graphql',
     },
     // Files processed by the extension
     includes: [

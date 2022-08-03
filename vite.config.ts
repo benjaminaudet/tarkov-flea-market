@@ -24,6 +24,8 @@ export default defineConfig({
     alias: {
       '~/': `${path.resolve(__dirname, 'src')}/`,
       'vue-i18n': 'vue-i18n/dist/vue-i18n.cjs.js',
+      'find': "@vue/runtime-core",
+      'replacement': "@vue/runtime-core/dist/runtime-core.esm-bundler.js",
     },
   },
 
@@ -117,7 +119,7 @@ export default defineConfig({
       manifest: {
         name: 'Vitesse',
         short_name: 'Vitesse',
-        theme_color: '#ffffff',
+        theme_color: '#000000',
         icons: [
           {
             src: '/pwa-192x192.png',

@@ -2,24 +2,27 @@ import { useQuery } from '@vue/apollo-composable'
 import { gql } from 'graphql-tag'
 
 export interface UseExampleQueryType {
-  company: {
-    ceo: string
-  }
-  roadster: {
-    apoapsis_au: number
-  }
+  name: string
 }
 
 export function useExampleQuery() {
   const { result, loading, error } = useQuery<UseExampleQueryType>(gql`
-   query ExampleQuery {
-     company {
-       ceo
-     }
-     roadster {
-       apoapsis_au
-     }
-   }
+  query getItems {
+    items(lang: en) {
+      name
+      shortName
+      basePrice
+      iconLink
+      iconLinkFallback
+      wikiLink
+      avg24hPrice
+      fleaMarketFee
+      low24hPrice
+      high24hPrice
+      changeLast48h
+      changeLast48hPercent
+    }
+  }
  `)
 
   return { result, loading, error }

@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import { ptBR, datePtBR } from 'naive-ui'
 import { ApolloClients } from '@vue/apollo-composable'
-import { apolloClient, otherApiClient } from './common/ApolloClient'
+import { apolloClient } from './common/ApolloClient'
 import { isDark, preferredDark } from '~/common/composables'
-
+  import { darkTheme } from 'naive-ui'
 // https://v4.apollo.vuejs.org/
 provide(ApolloClients, {
   default: apolloClient,
-  otherApi: otherApiClient,
 })
 
 // https://github.com/vueuse/head
@@ -17,10 +16,6 @@ useHead({
   title: 'Vitesse Modular NaiveUI',
   meta: [
     { name: 'description', content: 'Opinionated Vite Starter Template with modular architecture design' },
-    {
-      name: 'theme-color',
-      content: computed(() => isDark.value ? '#00aba9' : '#ffffff'),
-    },
   ],
   link: [
     {
@@ -35,7 +30,7 @@ const refMsgTargetEl = ref<any>()
 </script>
 
 <template>
-  <n-config-provider :locale="ptBR" :date-locale="datePtBR">
+  <n-config-provider :locale="ptBR" :date-locale="datePtBR" :theme="darkTheme">
     <n-loading-bar-provider>
       <n-message-provider :to="refMsgTargetEl">
         <n-notification-provider>

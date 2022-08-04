@@ -2,12 +2,16 @@
 // graphql example
 import { useExampleQuery } from '~/common/services/useExample.query'
 import { useFuse } from '@vueuse/integrations/useFuse'
+import { useScroll } from '@vueuse/core'
 
 const { result, loading, error } = useExampleQuery()
 
 
 const pageIndex = ref(20)
 const search = ref('')
+const el = ref<HTMLElement | null>(null)
+const { arrivedState } = useScroll(el)
+const { bottom } = toRefs(arrivedState)
 
 const { results } = useFuse(search, result)
 console.log(results)
@@ -16,6 +20,10 @@ const router = useRouter()
 const go = () => {
   router.push('/users/home')
 }
+
+watch(bottom, () => {
+  increasePageIndex()
+})
 
 // Internationalization
 const { t } = useI18n()

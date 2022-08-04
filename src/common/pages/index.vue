@@ -1,10 +1,10 @@
 <script setup lang="ts">
 // graphql example
-import { useExampleQuery } from '~/common/services/useExample.query'
+import { useGetItemsQuery } from '~/common/services/useExample.query'
 import { useFuse } from '@vueuse/integrations/useFuse'
 import { useScroll } from '@vueuse/core'
 
-const { result, loading, error } = useExampleQuery()
+const { result, loading, error } = useGetItemsQuery()
 
 
 const pageIndex = ref(20)
@@ -21,7 +21,8 @@ const go = () => {
   router.push('/users/home')
 }
 
-watch(bottom, () => {
+watch(bottom, (bottom: boolean) => {
+  console.log(bottom)
   increasePageIndex()
 })
 
@@ -57,7 +58,7 @@ function increasePageIndex() {
       <n-space vertical>
         <n-input v-model:value="value" type="text" placeholder="Search" />
         <n-grid x-gap="12" y-gap="12" :cols="5">
-          <n-gi v-for="item in result?.items.slice(0, pageIndex)">
+          <n-gi v-for="item in result?.items.slice(0, pageIndex)" :key="item.id">
             <VItemCard :loading="loading" :item="item" />
           </n-gi>
         </n-grid>

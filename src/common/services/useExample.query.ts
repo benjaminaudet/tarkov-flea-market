@@ -1,14 +1,15 @@
 import { useQuery } from '@vue/apollo-composable'
 import { gql } from 'graphql-tag'
 
-export interface UseExampleQueryType {
+export interface UseGetItemsQueryType {
   name: string
 }
 
-export function useExampleQuery() {
-  const { result, loading, error } = useQuery<UseExampleQueryType>(gql`
+export function useGetItemsQuery() {
+  const { result, loading, error } = useQuery<UseGetItemsQueryType>(gql`
   query getItems {
     items(lang: en) {
+      id
       name
       shortName
       basePrice

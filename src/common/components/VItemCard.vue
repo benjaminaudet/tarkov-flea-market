@@ -33,6 +33,7 @@ const props = defineProps({
       <n-tabs type="line" size="small" :tabs-padding="20" pane-style="padding: 20px;">
         <n-tab-pane name="Price Stats">
           Average Price 24h : {{ item.avg24hPrice }} roubles
+          <VButton><a :href="item.wikiLink" target="_blank">Wiki Page</a></VButton>
         </n-tab-pane>
         <n-tab-pane name="General Stats">
           ROCKLIFE

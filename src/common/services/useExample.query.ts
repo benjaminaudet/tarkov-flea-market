@@ -8,7 +8,7 @@ export interface UseGetItemsQueryType {
 export function useGetItemsQuery() {
   const { result, loading, error } = useQuery<UseGetItemsQueryType>(gql`
   query getItems {
-    items(lang: en) {
+    items(lang: fr) {
       id
       name
       shortName

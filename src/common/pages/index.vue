@@ -22,11 +22,6 @@ const go = () => {
   router.push("/users/home");
 };
 
-watch(bottom, (bottom: boolean) => {
-  console.log(bottom);
-  increasePageIndex();
-});
-
 // Internationalization
 const { t } = useI18n();
 const timestamp = ref(1183135260000);

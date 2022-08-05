@@ -7,7 +7,7 @@ import { vScroll } from "@vueuse/components";
 
 const { result, loading, error } = useGetItemsQuery();
 
-const pageIndex = ref(20);
+const pageIndex = ref(80);
 const search = ref("");
 const data = ref([]);
 
@@ -28,7 +28,7 @@ const { t } = useI18n();
 const timestamp = ref(1183135260000);
 
 function increasePageIndex() {
-  pageIndex.value += 20;
+  pageIndex.value += 80;
 }
 
 watch(search, () => {
@@ -46,11 +46,15 @@ watch(result, () => {
   }
 });
 
-let sortAvg24hPriceToggle = true
+let sortAvg24hPriceToggle = true;
 function toggleSortAvg24hPrice() {
-  data.value = [...data.value]
-  data.value = data.value.sort((a, b) => sortAvg24hPriceToggle ? b.avg24hPrice - a.avg24hPrice : a.avg24hPrice - b.avg24hPrice);
-  sortAvg24hPriceToggle = !sortAvg24hPriceToggle
+  data.value = [...data.value];
+  data.value = data.value.sort((a, b) =>
+    sortAvg24hPriceToggle
+      ? b.avg24hPrice - a.avg24hPrice
+      : a.avg24hPrice - b.avg24hPrice
+  );
+  sortAvg24hPriceToggle = !sortAvg24hPriceToggle;
 }
 </script>
 
@@ -61,8 +65,13 @@ function toggleSortAvg24hPrice() {
         <div>
           <n-space vertical>
             <n-input type="text" placeholder="Search" />
-            <n-grid x-gap="12" y-gap="12" :cols="5">
-              <n-gi v-for="i in new Array(20)">
+            <n-grid
+              x-gap="12"
+              y-gap="12"
+              cols="5 xs:1 s:2 m:3 l:4 xl:5 2xl:6"
+              responsive="screen"
+            >
+              <n-gi v-for="i in new Array(80)">
                 <VItemCard :loading="loading" />
               </n-gi>
             </n-grid>
@@ -72,7 +81,9 @@ function toggleSortAvg24hPrice() {
       </div>
       <div v-else-if="error">Error: {{ error.message }}</div>
       <div>
-        <VButton @click="toggleSortAvg24hPrice">Trier par prix moyen 24h</VButton>
+        <VButton @click="toggleSortAvg24hPrice"
+          >Trier par prix moyen 24h</VButton
+        >
         <n-space vertical>
           <n-input
             v-model:value.lazy="search"
@@ -83,8 +94,9 @@ function toggleSortAvg24hPrice() {
             v-if="data"
             x-gap="12"
             y-gap="12"
-            :cols="5"
-            class="overflow-y-auto h-[47rem]"
+            cols="5 xs:1 s:2 m:3 l:4 xl:5 2xl:6"
+            responsive="screen"
+            class="overflow-y-auto h-[100vh]"
             v-scroll="onScroll"
           >
             <n-gi v-for="item in data?.slice(0, pageIndex)" :key="item.id">

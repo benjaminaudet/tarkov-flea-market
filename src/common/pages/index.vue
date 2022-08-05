@@ -35,13 +35,12 @@ watch(search, () => {
   if (search.value === "") {
     data.value = result.value.items;
   }
-  data.value = result.value.items.filter((a) => a.name.includes(search.value));
+  data.value = result.value.items.filter((a) => a.name.toLowerCase().includes(search.value.toLowerCase()));
 });
 
 watch(result, () => {
   if (result.value) {
     data.value = result.value.items
-    console.log(data.value);
   }
 });
 </script>
@@ -65,7 +64,7 @@ watch(result, () => {
       <div v-else-if="error">Error: {{ error.message }}</div>
       <div>
         <n-space vertical>
-          <n-input v-model:value="search" type="text" placeholder="Search" />
+          <n-input v-model:value.lazy="search" type="text" placeholder="Search" />
           <n-grid
             v-if="data"
             x-gap="12"
@@ -78,7 +77,6 @@ watch(result, () => {
               <VItemCard :loading="loading" :item="item" />
             </n-gi>
           </n-grid>
-          <VButton @click="increasePageIndex">More...</VButton>
         </n-space>
       </div>
     </div>

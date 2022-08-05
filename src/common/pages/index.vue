@@ -35,14 +35,23 @@ watch(search, () => {
   if (search.value === "") {
     data.value = result.value.items;
   }
-  data.value = result.value.items.filter((a) => a.name.toLowerCase().includes(search.value.toLowerCase()));
+  data.value = result.value.items.filter((a) =>
+    a.name.toLowerCase().includes(search.value.toLowerCase())
+  );
 });
 
 watch(result, () => {
   if (result.value) {
-    data.value = result.value.items
+    data.value = result.value.items;
   }
 });
+
+let sortAvg24hPriceToggle = true
+function toggleSortAvg24hPrice() {
+  data.value = [...data.value]
+  data.value = data.value.sort((a, b) => sortAvg24hPriceToggle ? b.avg24hPrice - a.avg24hPrice : a.avg24hPrice - b.avg24hPrice);
+  sortAvg24hPriceToggle = !sortAvg24hPriceToggle
+}
 </script>
 
 <template>
@@ -63,8 +72,13 @@ watch(result, () => {
       </div>
       <div v-else-if="error">Error: {{ error.message }}</div>
       <div>
+        <VButton @click="toggleSortAvg24hPrice">Trier par prix moyen 24h</VButton>
         <n-space vertical>
-          <n-input v-model:value.lazy="search" type="text" placeholder="Search" />
+          <n-input
+            v-model:value.lazy="search"
+            type="text"
+            placeholder="Search"
+          />
           <n-grid
             v-if="data"
             x-gap="12"

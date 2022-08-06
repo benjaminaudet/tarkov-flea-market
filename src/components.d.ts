@@ -32,6 +32,7 @@ declare module '@vue/runtime-core' {
     NSwitch: typeof import('naive-ui')['NSwitch']
     NTabPane: typeof import('naive-ui')['NTabPane']
     NTabs: typeof import('naive-ui')['NTabs']
+    NTag: typeof import('naive-ui')['NTag']
     PlanItem: typeof import('./orders/components/PlanItem.vue')['default']
     README: typeof import('./common/components/README.md')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

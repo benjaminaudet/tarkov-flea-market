@@ -13,10 +13,16 @@ export function useGetItemsQuery() {
       name
       shortName
       basePrice
-      iconLink
-      iconLinkFallback
+      gridImageLink
+      gridImageLinkFallback
       wikiLink
       avg24hPrice
+      sellFor {
+        vendor {
+          name
+        }
+        priceRUB
+      }
       fleaMarketFee
       low24hPrice
       high24hPrice

@@ -43,18 +43,18 @@ watch(search, () => {
 watch(result, () => {
   if (result.value) {
     data.value = result.value.items;
+    toggleSort();
   }
 });
 
-let sortAvg24hPriceToggle = true;
-function toggleSortAvg24hPrice() {
+let sortToggle = true;
+function toggleSort(key: string) {
+  console.log();
   data.value = [...data.value];
   data.value = data.value.sort((a, b) =>
-    sortAvg24hPriceToggle
-      ? b.avg24hPrice - a.avg24hPrice
-      : a.avg24hPrice - b.avg24hPrice
+    sortToggle ? b[key] - a[key] : a[key] - b[key]
   );
-  sortAvg24hPriceToggle = !sortAvg24hPriceToggle;
+  sortToggle = !sortToggle;
 }
 </script>
 
@@ -68,7 +68,7 @@ function toggleSortAvg24hPrice() {
             <n-grid
               x-gap="12"
               y-gap="12"
-              cols="5 xs:1 s:2 m:3 l:4 xl:5 2xl:6"
+              cols="5 xs:1 s:2 m:2 l:3 xl:4 2xl:5"
               responsive="screen"
             >
               <n-gi v-for="i in new Array(80)">
@@ -81,10 +81,15 @@ function toggleSortAvg24hPrice() {
       </div>
       <div v-else-if="error">Error: {{ error.message }}</div>
       <div>
-        <VButton @click="toggleSortAvg24hPrice"
-          >Trier par prix moyen 24h</VButton
-        >
         <n-space vertical>
+          <n-space>
+            <VButton @click="toggleSort('avg24hPrice')"
+              >Trier par prix moyen 24h</VButton
+            >
+            <VButton @click="toggleSort('changeLast48h')"
+              >Trier par changement de prix moyen 48h</VButton
+            >
+          </n-space>
           <n-input
             v-model:value.lazy="search"
             type="text"
@@ -94,7 +99,7 @@ function toggleSortAvg24hPrice() {
             v-if="data"
             x-gap="12"
             y-gap="12"
-            cols="5 xs:1 s:2 m:3 l:4 xl:5 2xl:6"
+            cols="5 xs:1 s:2 m:2 l:3 xl:4 2xl:5"
             responsive="screen"
             class="overflow-y-auto h-[100vh]"
             v-scroll="onScroll"

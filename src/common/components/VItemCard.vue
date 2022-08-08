@@ -1,13 +1,19 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed } from 'vue'
+import { useElementVisibility } from '@vueuse/core'
+import _ from 'lodash'
 
 const props = defineProps({
   item: Object,
   loading: Boolean,
 })
 
-function numberWithCommas(x) {
-  return x?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+const sellFor = ref([])
+
+if (props && props.item) {
+  sellFor.value = [...props.item.sellFor]
+  sellFor.value.pop()
+  sellFor.value = _.orderBy(sellFor.value, 'priceRUB', 'desc')
 }
 </script>
 
@@ -37,36 +43,51 @@ function numberWithCommas(x) {
           {{ item.name }}
         </div>
       </template>
-      <n-tabs type="line" size="small" :tabs-padding="20" pane-style="padding: 20px;">
-        <n-tab-pane name="Price Stats">
-          <n-space>
-            <div>
-              <n-space>
-                <n-tag :bordered="false">
-                  Prix Moyen 24h
-                </n-tag>
-                <n-tag :bordered="false" type="success" class="bold">
-                  {{ numberWithCommas(item.avg24hPrice) }}₽
-                </n-tag>
-              </n-space>
-            </div>
-            <div>
-              <n-space>
-                <n-tag :bordered="false">
-                  Variation Prix Moyen vs 48h
-                </n-tag>
-                <n-tag :bordered="false" type="success" class="bold">
-                  {{ numberWithCommas(item.changeLast48h) }}₽
-                </n-tag>
-              </n-space>
-            </div>
-          </n-space>
+      <n-tabs type="segment" size="small" :tabs-padding="20" pane-style="padding: 20px;">
+        <n-tab-pane name="Flea Stats">
+          <n-grid x-gap="12" y-gap="12" cols="1">
+            <n-gi class="text-left">
+              <n-tag :bordered="false" class="rounded-r-none w-[50%]">
+                Prix moyen 24h
+              </n-tag>
+              <n-tag :bordered="false" type="success" class="bold rounded-l-none w-[50%]">
+                <n-number-animation
+                  ref="numberAnimationInstRef"
+                  :duration="300" show-separator :from="0" :to="item.avg24hPrice"
+                />
+                ₽
+              </n-tag>
+            </n-gi>
+          </n-grid>
+          <n-tag :bordered="false" class="rounded-r-none  w-[50%]">
+            Variation prix 48h
+          </n-tag>
+          <n-tag :bordered="false" type="success" class="bold rounded-l-none w-[50%]">
+            <n-number-animation
+              ref="numberAnimationInstRef"
+              :duration="300" show-separator :from="0" :to="item.changeLast48h"
+            />
+            ₽
+          </n-tag>
           <VButton>
             <a :href="item.wikiLink" target="_blank">Page Wiki</a>
           </VButton>
         </n-tab-pane>
-        <n-tab-pane name="General Stats">
-          ROCKLIFE
+        <n-tab-pane name="Traders Stats">
+          <n-grid x-gap="12" y-gap="12" cols="1">
+            <n-gi v-for="trader in sellFor" :key="`${item.id}:${trader?.vendor?.name}`" class="text-left">
+              <n-tag :bordered="false" class="rounded-r-none w-[50%]">
+                {{ trader?.vendor?.name }}
+              </n-tag>
+              <n-tag :bordered="false" type="success" class="bold rounded-l-none w-[50%]">
+                <n-number-animation
+                  ref="numberAnimationInstRef"
+                  :duration="300" show-separator :from="0" :to="trader?.priceRUB"
+                />
+                ₽
+              </n-tag>
+            </n-gi>
+          </n-grid>
         </n-tab-pane>
       </n-tabs>
     </n-card>

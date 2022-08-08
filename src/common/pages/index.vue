@@ -76,7 +76,7 @@ const toggleSort = (key: string) => {
           <n-space vertical>
             <n-input type="text" placeholder="Search" />
             <n-grid x-gap="12" y-gap="12" cols="5 xs:1 s:2 m:2 l:3 xl:4 2xl:5" responsive="screen">
-              <n-gi v-for="i in new Array(80)" :key="i">
+              <n-gi v-for="i in new Array(40)" :key="i">
                 <VItemCard :loading="loading" />
               </n-gi>
             </n-grid>
@@ -92,8 +92,10 @@ const toggleSort = (key: string) => {
       <div>
         <n-space vertical>
           <n-input v-model:value.lazy="search" type="text" placeholder="Search" />
-          <n-select filterable placeholder="Choisir un filtre" default-value="avg24hPrice" :options="sortOptions"
-            @update:value="toggleSort">
+          <n-select
+            filterable placeholder="Choisir un filtre" default-value="avg24hPrice" :options="sortOptions"
+            @update:value="toggleSort"
+          >
             <template #arrow>
               <transition name="slide-left">
                 <IconAscendingSort v-if="sortDirectionAsc" :style="`color: ${colors.teal[400]}`" />
@@ -101,8 +103,10 @@ const toggleSort = (key: string) => {
               </transition>
             </template>
           </n-select>
-          <n-grid v-if="data" v-scroll="onScroll" x-gap="12" y-gap="12" cols="5 xs:1 s:2 m:2 l:3 xl:4 2xl:5"
-            responsive="screen" class="overflow-y-auto h-[100vh] pr-2">
+          <n-grid
+            v-if="data" v-scroll="onScroll" x-gap="12" y-gap="12" cols="5 xs:1 s:2 m:2 l:3 xl:4 2xl:5"
+            responsive="screen" class="overflow-y-auto h-[100vh] pr-2"
+          >
             <n-gi v-for="item in data?.slice(0, pageIndex)" :key="item.id">
               <VItemCard :loading="loading" :item="item" />
             </n-gi>

@@ -5,13 +5,19 @@ import { useFuse } from "@vueuse/integrations/useFuse";
 import type { UseScrollReturn } from "@vueuse/core";
 import { vScroll } from "@vueuse/components";
 
+import colors from 'tailwindcss/colors'
+
+import IconAscendingSort from '~icons/bi/sort-numeric-down'
+import IconDescendingSort from '~icons/bi/sort-numeric-up'
+
 const { result, loading, error } = useGetItemsQuery();
 
 const pageIndex = ref(80);
 const search = ref("");
 const data = ref([]);
+const sortDirectionAsc = ref(true);
 
-function onScroll(state: UseScrollReturn) {
+const onScroll = (state: UseScrollReturn) => {
   if (state.arrivedState.bottom) {
     increasePageIndex();
   }
@@ -27,7 +33,7 @@ const go = () => {
 const { t } = useI18n();
 const timestamp = ref(1183135260000);
 
-function increasePageIndex() {
+const increasePageIndex = () => {
   pageIndex.value += 80;
 }
 
@@ -43,19 +49,20 @@ watch(search, () => {
 watch(result, () => {
   if (result.value) {
     data.value = result.value.items;
-    toggleSort();
+    toggleSort('avg24hPrice');
   }
 });
 
-let sortToggle = true;
-function toggleSort(key: string) {
+let sortOptions = [{ 'label': 'Trier par prix moyen 24h', 'value': 'avg24hPrice' }, { 'label': 'Trier par variation du prix dernières 48h', 'value': 'changeLast48h' }];
+const toggleSort = (key: string) => {
   console.log();
   data.value = [...data.value];
   data.value = data.value.sort((a, b) =>
-    sortToggle ? b[key] - a[key] : a[key] - b[key]
+    sortDirectionAsc.value ? b[key] - a[key] : a[key] - b[key]
   );
-  sortToggle = !sortToggle;
+  sortDirectionAsc.value = !sortDirectionAsc.value;
 }
+
 </script>
 
 <template>
@@ -65,12 +72,7 @@ function toggleSort(key: string) {
         <div>
           <n-space vertical>
             <n-input type="text" placeholder="Search" />
-            <n-grid
-              x-gap="12"
-              y-gap="12"
-              cols="5 xs:1 s:2 m:2 l:3 xl:4 2xl:5"
-              responsive="screen"
-            >
+            <n-grid x-gap="12" y-gap="12" cols="5 xs:1 s:2 m:2 l:3 xl:4 2xl:5" responsive="screen">
               <n-gi v-for="i in new Array(80)">
                 <VItemCard :loading="loading" />
               </n-gi>
@@ -82,28 +84,19 @@ function toggleSort(key: string) {
       <div v-else-if="error">Error: {{ error.message }}</div>
       <div>
         <n-space vertical>
-          <n-space>
-            <VButton @click="toggleSort('avg24hPrice')"
-              >Trier par prix moyen 24h</VButton
-            >
-            <VButton @click="toggleSort('changeLast48h')"
-              >Trier par changement de prix moyen 48h</VButton
-            >
-          </n-space>
-          <n-input
-            v-model:value.lazy="search"
-            type="text"
-            placeholder="Search"
-          />
-          <n-grid
-            v-if="data"
-            x-gap="12"
-            y-gap="12"
-            cols="5 xs:1 s:2 m:2 l:3 xl:4 2xl:5"
-            responsive="screen"
-            class="overflow-y-auto h-[100vh]"
-            v-scroll="onScroll"
-          >
+
+          <n-input v-model:value.lazy="search" type="text" placeholder="Search" />
+          <n-select @update:value="toggleSort" filterable placeholder="Choisir un filtre" default-value="avg24hPrice"
+            :options="sortOptions">
+            <template #arrow>
+              <transition name="slide-left">
+                <icon-ascending-sort v-if="sortDirectionAsc" />
+                <icon-descending-sort v-else :style="`color: ${colors.teal[400]}`"/>
+              </transition>
+            </template>
+          </n-select>
+          <n-grid v-if="data" x-gap="12" y-gap="12" cols="5 xs:1 s:2 m:2 l:3 xl:4 2xl:5" responsive="screen"
+            class="overflow-y-auto h-[100vh]" v-scroll="onScroll">
             <n-gi v-for="item in data?.slice(0, pageIndex)" :key="item.id">
               <VItemCard :loading="loading" :item="item" />
             </n-gi>

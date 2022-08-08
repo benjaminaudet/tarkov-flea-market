@@ -15,6 +15,8 @@ declare module '@vue/runtime-core' {
     CarbonSun: typeof import('~icons/carbon/sun')['default']
     Counter: typeof import('./counter/components/Counter.vue')['default']
     Footer: typeof import('./common/components/Footer.vue')['default']
+    Icon: typeof import('~icons/ic/on')['default']
+    IconAccountBox: typeof import('~icons/ic/on-account-box')['default']
     NCard: typeof import('naive-ui')['NCard']
     NConfigProvider: typeof import('naive-ui')['NConfigProvider']
     NDatePicker: typeof import('naive-ui')['NDatePicker']

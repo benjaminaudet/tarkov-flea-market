@@ -1,7 +1,5 @@
 <script setup lang="ts">
-// graphql example
-import { useGetItemsQuery } from "~/common/services/useExample.query";
-import { useFuse } from "@vueuse/integrations/useFuse";
+import { useGetItemsQuery } from "~/common/services/useGetItems.query";
 import type { UseScrollReturn } from "@vueuse/core";
 import { vScroll } from "@vueuse/components";
 
@@ -16,6 +14,7 @@ const pageIndex = ref(80);
 const search = ref("");
 const data = ref([]);
 const sortDirectionAsc = ref(true);
+const sortType = ref('avg24hPrice')
 
 const onScroll = (state: UseScrollReturn) => {
   if (state.arrivedState.bottom) {
@@ -44,23 +43,33 @@ watch(search, () => {
   data.value = result.value.items.filter((a) =>
     a.name.toLowerCase().includes(search.value.toLowerCase())
   );
+  toggleSort(sortType.value)
 });
 
 watch(result, () => {
   if (result.value) {
     data.value = result.value.items;
-    toggleSort('avg24hPrice');
+    sort('avg24hPrice')
   }
 });
 
 let sortOptions = [{ 'label': 'Trier par prix moyen 24h', 'value': 'avg24hPrice' }, { 'label': 'Trier par variation du prix dernières 48h', 'value': 'changeLast48h' }];
-const toggleSort = (key: string) => {
-  console.log();
+
+const sort = (key: string) => {
+  sortType.value = key;
   data.value = [...data.value];
   data.value = data.value.sort((a, b) =>
     sortDirectionAsc.value ? b[key] - a[key] : a[key] - b[key]
   );
+}
+
+const toggleSort = (key: string) => {
+  sort(key);
+  console.log('before')
+  console.log(sortDirectionAsc.value)
   sortDirectionAsc.value = !sortDirectionAsc.value;
+  console.log('after')
+  console.log(sortDirectionAsc.value)
 }
 
 </script>
@@ -90,13 +99,13 @@ const toggleSort = (key: string) => {
             :options="sortOptions">
             <template #arrow>
               <transition name="slide-left">
-                <icon-ascending-sort v-if="sortDirectionAsc" />
-                <icon-descending-sort v-else :style="`color: ${colors.teal[400]}`"/>
+                <icon-ascending-sort v-if="sortDirectionAsc" :style="`color: ${colors.teal[400]}`" />
+                <icon-descending-sort v-else :style="`color: ${colors.teal[400]}`" />
               </transition>
             </template>
           </n-select>
           <n-grid v-if="data" x-gap="12" y-gap="12" cols="5 xs:1 s:2 m:2 l:3 xl:4 2xl:5" responsive="screen"
-            class="overflow-y-auto h-[100vh]" v-scroll="onScroll">
+            class="overflow-y-auto h-[100vh] pr-2" v-scroll="onScroll">
             <n-gi v-for="item in data?.slice(0, pageIndex)" :key="item.id">
               <VItemCard :loading="loading" :item="item" />
             </n-gi>

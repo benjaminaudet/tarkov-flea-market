@@ -37,7 +37,6 @@ I will highly recommend you to try [Vitesse](https://github.com/antfu/vitesse) u
 // syntax highlighting example
 function vitesse() {
   const foo = 'bar'
-  console.log(foo)
 }
 ```
 

@@ -76,7 +76,7 @@ const toggleSort = (key: string) => {
           <n-space vertical>
             <n-input type="text" placeholder="Search" />
             <n-grid x-gap="12" y-gap="12" cols="5 xs:1 s:2 m:2 l:3 xl:4 2xl:5" responsive="screen">
-              <n-gi v-for="i in new Array(80)">
+              <n-gi v-for="i in new Array(80)" :key="i">
                 <VItemCard :loading="loading" />
               </n-gi>
             </n-grid>

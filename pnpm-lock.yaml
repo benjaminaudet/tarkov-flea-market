@@ -9,6 +9,7 @@ specifiers:
   '@iconify-json/carbon': ^1.1.7
   '@iconify-json/ic': ^1.1.8
   '@iconify-json/mdi': ^1.1.29
+  '@iconify-json/wpf': ^1.1.2
   '@intlify/vite-plugin-vue-i18n': ^4.0.0
   '@tailwindcss/typography': ^0.5.4
   '@types/markdown-it-link-attributes': ^3.0.1
@@ -89,6 +90,7 @@ devDependencies:
   '@iconify-json/carbon': 1.1.7
   '@iconify-json/ic': 1.1.8
   '@iconify-json/mdi': 1.1.29
+  '@iconify-json/wpf': 1.1.2
   '@intlify/vite-plugin-vue-i18n': 4.0.0_vite@3.0.4+vue-i18n@9.2.2
   '@tailwindcss/typography': 0.5.4_tailwindcss@3.1.8
   '@types/markdown-it-link-attributes': 3.0.1
@@ -1606,6 +1608,12 @@ packages:
 
   /@iconify-json/mdi/1.1.29:
     resolution: {integrity: sha512-klGuStNuyOHJIaCK36XWiXuUnnxKaZfGXGh+RVf4hbB2Pyvp//PgNvluz8uK32remmQDydzPr+ipvqbenxzQ2g==}
+    dependencies:
+      '@iconify/types': 1.1.0
+    dev: true
+
+  /@iconify-json/wpf/1.1.2:
+    resolution: {integrity: sha512-KgjldssGrXI9OALjg8qjZBMb48PYleK73s22lJpE0LhGoRd7T1nSeAAqig1qASmP8UvbHviBTT9sM8wfJK58Ag==}
     dependencies:
       '@iconify/types': 1.1.0
     dev: true

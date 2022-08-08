@@ -64,11 +64,7 @@ const sort = (key: string) => {
 
 const toggleSort = (key: string) => {
   sort(key)
-  console.log('before')
-  console.log(sortDirectionAsc.value)
   sortDirectionAsc.value = !sortDirectionAsc.value
-  console.log('after')
-  console.log(sortDirectionAsc.value)
 }
 </script>
 

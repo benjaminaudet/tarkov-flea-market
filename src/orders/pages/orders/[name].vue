@@ -33,62 +33,38 @@ const confirmSelectedPlan = () => {
     <v-title-lg>
       {{ t('order.order-summary') }}
     </v-title-lg>
-    <v-description
-      class="my-5"
-    >
+    <v-description class="my-5">
       {{ t('order.description') }}
     </v-description>
     <div class="flex flex-col space-y-4">
-      <PlanItem
-        :plan-title="`${t('order.plans.annual')} ${t('order.plan')}`"
-        :plan-cost="59.99"
-        :plan-duration="t('order.year')"
-        :is-selected="currentPlan.duration === t('order.year')"
-        @click="selectCurrentPlan({
+      <PlanItem :plan-title="`${t('order.plans.annual')} ${t('order.plan')}`" :plan-cost="59.99"
+        :plan-duration="t('order.year')" :is-selected="currentPlan.duration === t('order.year')" @click="selectCurrentPlan({
           cost: 59.99,
           title: t('order.plans.annual'),
           duration: t('order.year'),
-        })"
-      />
-      <PlanItem
-        :plan-title="`${t('order.plans.monthly')} ${t('order.plan')}`"
-        :plan-cost="7.99"
-        :plan-duration="t('order.month')"
-        :is-selected="currentPlan.duration === t('order.month')"
-        @click="selectCurrentPlan({
+        })" />
+      <PlanItem :plan-title="`${t('order.plans.monthly')} ${t('order.plan')}`" :plan-cost="7.99"
+        :plan-duration="t('order.month')" :is-selected="currentPlan.duration === t('order.month')" @click="selectCurrentPlan({
           cost: 7.99,
           title: t('order.plans.monthly'),
           duration: t('order.month'),
-        })"
-      />
-      <PlanItem
-        :plan-title="`${t('order.plans.weekly')} ${t('order.plan')}`"
-        :plan-cost="2.99"
-        :plan-duration="t('order.week')"
-        :is-selected="currentPlan.duration === t('order.week')"
-        @click="selectCurrentPlan({
+        })" />
+      <PlanItem :plan-title="`${t('order.plans.weekly')} ${t('order.plan')}`" :plan-cost="2.99"
+        :plan-duration="t('order.week')" :is-selected="currentPlan.duration === t('order.week')" @click="selectCurrentPlan({
           cost: 2.99,
           title: t('order.plans.weekly'),
           duration: t('order.week'),
-        })"
-      />
+        })" />
     </div>
 
     <div class="mb-0 mt-8">
-      <VButton
-        class="text-base px-4 py-2"
-        data-test="btn-confirm-plan"
-        @click="confirmSelectedPlan"
-      >
+      <VButton class="text-base px-4 py-2" data-test="btn-confirm-plan" @click="confirmSelectedPlan">
         {{ t('order.confirm-selected-plan') }}
       </VButton>
     </div>
 
     <div class="mb-8">
-      <VButtonText
-        class="px-4 py-2 font-semibold text-gray-500"
-        @click="router.back()"
-      >
+      <VButtonText class="px-4 py-2 font-semibold text-gray-500" @click="router.back()">
         {{ t('order.cancel-order') }}
       </VButtonText>
     </div>

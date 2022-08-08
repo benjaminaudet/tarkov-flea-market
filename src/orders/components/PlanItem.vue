@@ -17,12 +17,9 @@ const props = withDefaults(defineProps<Props>(), {
       props.isSelected
         ? 'ring-2 ring-teal-400 bg-teal-50 text-teal-600 dark:bg-gray-900'
         : 'bg-blue-50 text-gray-600 dark:bg-gray-800 dark:text-gray-400',
-    ]"
-  >
-    <div
-      class="w-12 h-12 p-3 rounded-full"
-      :class="[props.isSelected ? 'bg-teal-200 dark:bg-gray-800' : 'bg-blue-100 dark:bg-gray-700']"
-    >
+    ]">
+    <div class="w-12 h-12 p-3 rounded-full"
+      :class="[props.isSelected ? 'bg-teal-200 dark:bg-gray-800' : 'bg-blue-100 dark:bg-gray-700']">
       <carbon-music class="inline-block" />
     </div>
     <div class="text-left">

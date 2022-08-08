@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { ptBR, datePtBR } from 'naive-ui'
+import { darkTheme, datePtBR, ptBR } from 'naive-ui'
 import { ApolloClients } from '@vue/apollo-composable'
 import { apolloClient } from './common/ApolloClient'
 import { isDark, preferredDark } from '~/common/composables'
-import { darkTheme } from 'naive-ui'
 
 provide(ApolloClients, {
   default: apolloClient,
@@ -36,7 +35,7 @@ const refMsgTargetEl = ref<any>()
         <n-notification-provider>
           <n-dialog-provider>
             <router-view />
-            <div ref="refMsgTargetEl" class="app-msg-target"></div>
+            <div ref="refMsgTargetEl" class="app-msg-target" />
           </n-dialog-provider>
         </n-notification-provider>
       </n-message-provider>

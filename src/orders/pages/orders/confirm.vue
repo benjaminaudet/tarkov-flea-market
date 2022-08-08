@@ -25,31 +25,19 @@ const userStore = useUserStore()
       {{ t('order.thanks-message') }}
     </v-title-lg>
 
-    <v-description
-      class="my-5"
-    >
+    <v-description class="my-5">
       {{ t('order.plan-contact-info') }}
     </v-description>
 
-    <PlanItem
-      :plan-title="orderStore.savedPlanTitle"
-      :plan-cost="orderStore.savedPlanCost"
-      :plan-duration="orderStore.savedPlanDuration"
-      :is-selected="true"
-      class="w-full"
-    />
+    <PlanItem :plan-title="orderStore.savedPlanTitle" :plan-cost="orderStore.savedPlanCost"
+      :plan-duration="orderStore.savedPlanDuration" :is-selected="true" class="w-full" />
 
-    <v-description
-      class="my-5"
-    >
+    <v-description class="my-5">
       {{ t('no-data-saved') }}
     </v-description>
 
     <div class="mb-8">
-      <VButtonText
-        class="text-gray-500 font-semibold px-4 py-2"
-        @click.self="router.push('/')"
-      >
+      <VButtonText class="text-gray-500 font-semibold px-4 py-2" @click.self="router.push('/')">
         {{ t('button.home') }}
       </VButtonText>
     </div>

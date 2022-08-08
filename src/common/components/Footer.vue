@@ -29,7 +29,8 @@ const toggleLocales = () => {
       <carbon-dicom-overlay />
     </RouterLink>
 
-    <a class="mx-2 icon-btn" rel="noreferrer" href="https://github.com/shamscorner/vitesse-stackter-clean-architect" target="_blank" title="GitHub">
+    <a class="mx-2 icon-btn" rel="noreferrer" href="https://github.com/shamscorner/vitesse-stackter-clean-architect"
+      target="_blank" title="GitHub">
       <carbon-logo-github />
     </a>
   </nav>

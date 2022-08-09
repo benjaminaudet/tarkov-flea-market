@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { refDebounced } from '@vueuse/core'
+
 interface Props {
   modelValue?: string
 }
@@ -6,6 +8,8 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   modelValue: '',
 })
+
+const debounced = refDebounced(input, 1000)
 
 const emit = defineEmits<{
   (event: 'update:modelValue', value: string): void

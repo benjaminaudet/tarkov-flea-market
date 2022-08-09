@@ -21,7 +21,16 @@ export function useGetItemsQuery() {
         vendor {
           name
         }
+        currency
         priceRUB
+      }
+      buyFor {
+        vendor {
+          name
+        }
+        currency
+        priceRUB
+        price
       }
       fleaMarketFee
       low24hPrice

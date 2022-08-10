@@ -20,6 +20,7 @@ const sortDirectionAsc = ref(true)
 const sortType = ref('avg24hPrice')
 const scrollContainerRef = ref<HTMLElement | undefined>(undefined)
 const target = scrollContainerRef.value
+const globalActiveTab = ref('default')
 
 const onScroll = (state: UseScrollReturn) => {
   if (state.arrivedState.bottom)
@@ -65,6 +66,7 @@ watch(result, () => {
 const sortByTraderToBuy = (key: string) => {
   sortType.value = key
   dataToUse.value = [...data.value]
+  globalActiveTab.value = 'traders'
   dataToUse.value = dataToUse.value.filter((el) => {
     return el.buyFor.find(_el => _el.vendor.name === key)
   })
@@ -78,6 +80,7 @@ const sortByTraderToBuy = (key: string) => {
 const sortByTraderToSell = (key: string) => {
   sortType.value = key
   dataToUse.value = [...data.value]
+  globalActiveTab.value = 'traders'
   dataToUse.value = dataToUse.value.filter((el) => {
     return el.sellFor.find(_el => _el.vendor.name === key)
   })
@@ -91,6 +94,7 @@ const sortByTraderToSell = (key: string) => {
 const sort = (key: string) => {
   sortType.value = key
   dataToUse.value = [...data.value]
+  globalActiveTab.value = 'flea'
   dataToUse.value = dataToUse.value.sort((a, b) =>
     sortDirectionAsc.value ? b[key] - a[key] : a[key] - b[key],
   )
@@ -175,7 +179,7 @@ const sortOptions = [
             responsive="screen"
           >
             <n-gi v-for="item in dataToUse?.slice(0, pageIndex)" :key="item.id">
-              <VItemCard :loading="loading" :item="item" />
+              <VItemCard :loading="loading" :item="item" :global-active-tab="globalActiveTab" />
             </n-gi>
           </n-grid>
         </n-space>

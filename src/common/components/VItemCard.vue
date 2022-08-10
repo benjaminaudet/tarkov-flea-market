@@ -9,13 +9,15 @@ import IconWIP from '~icons/wpf/maintenance'
 const props = defineProps({
   item: Object,
   loading: Boolean,
+  globalActiveTab: String,
 })
 
-const activeTab = ref('flea')
+const DEFAULT_TAB_ACTIVE = 'flea'
+const activeTab = ref(DEFAULT_TAB_ACTIVE)
 const sellFor = ref([])
 const buyFor = ref([])
 
-if (props && props.item) {
+if (props?.item) {
   sellFor.value = [...props.item.sellFor]
   buyFor.value = [...props.item.buyFor]
 
@@ -24,6 +26,11 @@ if (props && props.item) {
   sellFor.value = _.orderBy(sellFor.value, 'priceRUB', 'desc')
   buyFor.value = _.orderBy(buyFor.value, 'priceRUB', 'desc')
 }
+
+if (props?.globalActiveTab !== 'default')
+  activeTab.value = props?.globalActiveTab
+else
+  activeTab.value = DEFAULT_TAB_ACTIVE
 
 const getSellForObjectByTrader = (trader) => {
   return sellFor.value.find(el => el.vendor.name === trader)
@@ -72,7 +79,7 @@ const handleChange = (tab) => {
           {{ item.name }}
         </div>
       </template>
-      <n-tabs :on-update:value="handleChange" type="card" size="large" :tabs-padding="20" class="mb-4">
+      <n-tabs :on-update:value="handleChange" :value="activeTab" type="card" size="large" :tabs-padding="20" class="mb-4">
         <n-tab name="flea" class="active:text-teal-400">
           Flea Info
         </n-tab>

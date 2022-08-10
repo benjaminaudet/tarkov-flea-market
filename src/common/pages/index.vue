@@ -66,7 +66,7 @@ watch(result, () => {
 const sortByTraderToBuy = (key: string) => {
   sortType.value = key
   dataToUse.value = [...data.value]
-  globalActiveTab.value = 'traders'
+  globalActiveTab.value = 'tradersBuy'
   dataToUse.value = dataToUse.value.filter((el) => {
     return el.buyFor.find(_el => _el.vendor.name === key)
   })
@@ -80,7 +80,7 @@ const sortByTraderToBuy = (key: string) => {
 const sortByTraderToSell = (key: string) => {
   sortType.value = key
   dataToUse.value = [...data.value]
-  globalActiveTab.value = 'traders'
+  globalActiveTab.value = 'tradersSell'
   dataToUse.value = dataToUse.value.filter((el) => {
     return el.sellFor.find(_el => _el.vendor.name === key)
   })

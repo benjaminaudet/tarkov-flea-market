@@ -57,7 +57,12 @@ const handleChange = (tab) => {
           <n-skeleton text />
           <n-skeleton text />
         </n-tab-pane>
-        <n-tab-pane name="General Info">
+        <n-tab-pane name="Traders vendre">
+          <n-skeleton text />
+          <n-skeleton text />
+          <n-skeleton text />
+        </n-tab-pane>
+        <n-tab-pane name="Traders acheter">
           <n-skeleton text />
           <n-skeleton text />
           <n-skeleton text />
@@ -79,12 +84,15 @@ const handleChange = (tab) => {
           {{ item.name }}
         </div>
       </template>
-      <n-tabs :on-update:value="handleChange" :value="activeTab" type="card" size="large" :tabs-padding="20" class="mb-4">
+      <n-tabs :on-update:value="handleChange" :value="activeTab" type="card" size="small" :tabs-padding="20" class="mb-4">
         <n-tab name="flea" class="active:text-teal-400">
           Flea Info
         </n-tab>
-        <n-tab name="traders">
-          Traders Info
+        <n-tab name="tradersSell">
+          Traders vendre
+        </n-tab>
+        <n-tab name="tradersBuy" :disabled="buyFor.length <= 0">
+          Traders acheter
         </n-tab>
         <n-tab name="quests">
           Quests Info
@@ -119,25 +127,34 @@ const handleChange = (tab) => {
           <a :href="item.wikiLink" target="_blank">Page Wiki</a>
         </VButton>
       </div>
-      <div v-else-if="activeTab === 'traders'">
+      <div v-else-if="activeTab === 'tradersSell'">
         <n-grid x-gap="12" y-gap="12" cols="1">
-          <n-gi v-for="trader in ['Prapor', 'La Toubib', 'Fence', 'Skier', 'Peacekeeper', 'Mechanic', 'Ragman', 'Jaeger']" :key="`${item.id}:${trader}`">
-            <n-tag v-if="getSellForObjectByTrader(trader) || getBuyForObjectByTrader(trader)" :bordered="false" class="rounded-r-none w-[33%] text-center">
-              {{ trader }}
+          <n-gi v-for="trader in sellFor" :key="`${item.id}:${trader}`">
+            <n-tag :bordered="false" class="rounded-r-none w-[50%] text-center">
+              {{ trader?.vendor?.name }}
             </n-tag>
-            <n-tag v-if="getSellForObjectByTrader(trader) || getBuyForObjectByTrader(trader)" :bordered="false" type="success" class="bold rounded-l-none rounded-r-none w-[33%] text-center">
+            <n-tag :bordered="false" type="success" class="bold rounded-l-none rounded-r-none w-[50%] text-center">
               <n-number-animation
                 ref="numberAnimationInstRef"
-                :duration="300" show-separator :from="0" :to="getSellForObjectByTrader(trader)?.priceRUB || 0"
+                :duration="300" show-separator :from="0" :to="trader?.priceRUB || 0"
               />
-              ₽
+              {{ trader?.currency }}
             </n-tag>
-            <n-tag v-if="getSellForObjectByTrader(trader) || getBuyForObjectByTrader(trader)" :bordered="false" type="warning" class="bold rounded-l-none w-[33%] text-center">
+          </n-gi>
+        </n-grid>
+      </div>
+      <div v-else-if="activeTab === 'tradersBuy'">
+        <n-grid x-gap="12" y-gap="12" cols="1">
+          <n-gi v-for="trader in buyFor" :key="`${item.id}:${trader}`">
+            <n-tag :bordered="false" class="rounded-r-none w-[50%] text-center">
+              {{ trader?.vendor?.name }}
+            </n-tag>
+            <n-tag :bordered="false" type="warning" class="bold rounded-l-none w-[50%] text-center">
               <n-number-animation
                 ref="numberAnimationInstRef"
-                :duration="300" show-separator :from="0" :to="getBuyForObjectByTrader(trader)?.price"
+                :duration="300" show-separator :from="0" :to="trader?.price"
               />
-              {{ getBuyForObjectByTrader(trader)?.currency }}
+              {{ trader?.currency }}
             </n-tag>
           </n-gi>
         </n-grid>

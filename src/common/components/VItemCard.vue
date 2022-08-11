@@ -72,7 +72,7 @@ const handleChange = (tab) => {
           <n-skeleton text />
           <n-skeleton text />
         </n-tab-pane>
-        <n-tab-pane name="Quests Info">
+        <n-tab-pane name="Graphique">
           <n-skeleton text />
           <n-skeleton text />
           <n-skeleton text />
@@ -99,8 +99,8 @@ const handleChange = (tab) => {
         <n-tab name="tradersBuy" :disabled="buyFor.length < 1">
           Traders acheter
         </n-tab>
-        <n-tab name="quests">
-          Quests Info
+        <n-tab name="graph">
+          Graphique
         </n-tab>
       </n-tabs>
       <div v-if="activeTab === 'flea'">
@@ -167,7 +167,7 @@ const handleChange = (tab) => {
           </n-gi>
         </n-grid>
       </div>
-      <div v-else-if="activeTab === 'quests'" class="text-white">
+      <div v-else-if="activeTab === 'graph'" class="text-white">
         <GChart
           type="LineChart"
           :data="[['Day', 'Price'], ...historicalPrices]"

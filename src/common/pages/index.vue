@@ -150,7 +150,7 @@ const sortOptions = [
                 </n-button>
               </n-gi>
             </n-grid>
-            <n-grid x-gap="12" y-gap="12" cols="5 xs:1 s:2 m:2 l:3 xl:3 2xl:4" responsive="screen">
+            <n-grid x-gap="12" y-gap="12" cols="5 xs:1 s:1 m:1 l:2 xl:3 2xl:3 3xl:4" responsive="screen">
               <n-gi v-for="i in new Array(40)" :key="i">
                 <VItemCard :loading="loading" />
               </n-gi>
@@ -196,7 +196,7 @@ const sortOptions = [
             v-if="dataToUse" ref=""
             v-scroll="onScroll"
             class="overflow-y-scroll h-[100vh] pr-2"
-            x-gap="12" y-gap="12" cols="5 xs:1 s:2 m:2 l:3 xl:3 2xl:4"
+            x-gap="12" y-gap="12" cols="5 xs:1 s:1 m:1 l:2 xl:3 2xl:4 3xl:4"
             responsive="screen"
           >
             <n-gi v-for="item in dataToUse?.slice(0, pageIndex)" :key="item.id">

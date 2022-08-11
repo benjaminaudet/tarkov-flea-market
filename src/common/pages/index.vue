@@ -1,16 +1,22 @@
 <script setup lang="ts">
-import { refDebounced } from '@vueuse/core'
+import { reactive, refDebounced } from '@vueuse/core'
 import type { UseScrollReturn } from '@vueuse/core'
 import { vScroll } from '@vueuse/components'
 import colors from 'tailwindcss/colors'
-import { useGetItemsQuery } from '~/common/services/useGetItems.query'
+import { useLoadingBar } from 'naive-ui'
+import { GChart } from 'vue-google-charts'
+import { GET_ITEM_HISTORICAL_PRICES, useGetItemHistoricalPricesQuery, useGetItemsQuery } from '~/common/services/useGetItems.query'
 
 import IconAscendingSort from '~icons/bi/sort-numeric-down'
 import IconDescendingSort from '~icons/bi/sort-numeric-up'
 
 const { result, loading, error } = useGetItemsQuery()
+const { load, resultHistoricalPrices } = useGetItemHistoricalPricesQuery()
+const loadingBar = useLoadingBar()
+loadingBar.start()
 
-const pageIndex = ref(80)
+const DEFAULT_PAGE_INDEX = 20
+const pageIndex = ref(DEFAULT_PAGE_INDEX)
 const searchInput = ref('')
 const searchInputDebounced = refDebounced(searchInput, 500) // fire finished
 const searchInputDebouncedLoading = refDebounced(searchInput, 50) // fire loading
@@ -21,6 +27,8 @@ const sortType = ref('avg24hPrice')
 const scrollContainerRef = ref<HTMLElement | undefined>(undefined)
 const target = scrollContainerRef.value
 const globalActiveTab = ref('default')
+const active = ref(false)
+const itemDetails = reactive({ name: '', historicalPrices: [] })
 
 const onScroll = (state: UseScrollReturn) => {
   if (state.arrivedState.bottom)
@@ -38,7 +46,7 @@ const { t } = useI18n()
 const timestamp = ref(1183135260000)
 
 const increasePageIndex = () => {
-  pageIndex.value += 80
+  pageIndex.value += DEFAULT_PAGE_INDEX
 }
 
 watch(searchInputDebouncedLoading, () => {
@@ -57,8 +65,17 @@ watch(searchInputDebounced, () => {
 
 watch(result, () => {
   if (result.value) {
+    loadingBar.finish()
     data.value = result.value.items
     toggleSort('avg24hPrice')
+  }
+})
+
+watch(resultHistoricalPrices, () => {
+  if (resultHistoricalPrices.value) {
+    console.log('yeah')
+    itemDetails.value = { name: resultHistoricalPrices.value.item, historicalPrices: [...resultHistoricalPrices.value.item.historicalPrices.map(el => [new Date(parseInt(el.timestamp)), el.price])] }
+    console.log(itemDetails.value)
   }
 })
 
@@ -87,7 +104,7 @@ const sortByTraderToSell = (key: string) => {
 }
 
 const sort = (key: string) => {
-  globalActiveTab.value = 'flea'
+  globalActiveTab.value = 'default'
   dataToUse.value = dataToUse.value.sort((a, b) =>
     sortDirectionAsc.value ? b[key] - a[key] : a[key] - b[key],
   )
@@ -104,6 +121,11 @@ const toggleSort = (key, force = false) => {
     sortByTraderToSell(key.split(':')[0])
   else if (key.includes('buy'))
     sortByTraderToBuy(key.split(':')[0])
+}
+
+const openGraph = (item) => {
+  active.value = true
+  load(GET_ITEM_HISTORICAL_PRICES, { id: item.id })
 }
 
 const sortOptions = [
@@ -124,10 +146,14 @@ const sortOptions = [
   { label: 'Skier pour acheter', value: 'Skier:buy' },
   { label: 'Prapor pour acheter', value: 'Prapor:buy' },
 ]
+console.log(resultHistoricalPrices.value)
 </script>
 
 <template>
   <div>
+    <n-loading-bar-provider>
+      <content />
+    </n-loading-bar-provider>
     <div>
       <div v-if="loading">
         <div>
@@ -200,10 +226,27 @@ const sortOptions = [
             responsive="screen"
           >
             <n-gi v-for="item in dataToUse?.slice(0, pageIndex)" :key="item.id">
-              <VItemCard :loading="loading" :item="item" :global-active-tab="globalActiveTab" />
+              <VItemCard :loading="loading" :item="item" :global-active-tab="globalActiveTab" :open-graph="openGraph" />
             </n-gi>
           </n-grid>
         </n-space>
+        <n-drawer
+          v-model:show="active"
+          default-height="80vh"
+          placement="top"
+          resizable
+        >
+          <n-drawer-content title="Graphique prix de cette dernière semaine">
+            <div class="text-white">
+              <h1>{{ itemDetails.name }}</h1>
+              <!-- <GChart
+                type="LineChart"
+                :data="[['Day', 'Price'], ...itemDetails.historicalPrices]"
+                :options="{ curveType: 'function', colors: [colors.teal[400]], backgroundColor: '#18181c', hAxis: { textStyle: { color: colors.teal[400] } }, vAxis: { textStyle: { color: colors.teal[400] } } }"
+              /> -->
+            </div>
+          </n-drawer-content>
+        </n-drawer>
       </div>
     </div>
   </div>

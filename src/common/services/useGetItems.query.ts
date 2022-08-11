@@ -1,20 +1,17 @@
-import { useQuery } from '@vue/apollo-composable'
+import { useLazyQuery, useQuery } from '@vue/apollo-composable'
 import { gql } from 'graphql-tag'
 
 export interface UseGetItemsQueryType {
   name: string
 }
 
-export function useGetItemsQuery() {
-  const { result, loading, error } = useQuery<UseGetItemsQueryType>(gql`
+export const GET_ITEMS_QUERY = gql`
   query getItems {
     items(lang: fr) {
       id
       name
-      shortName
       basePrice
       gridImageLink
-      gridImageLinkFallback
       wikiLink
       avg24hPrice
       sellFor {
@@ -22,6 +19,7 @@ export function useGetItemsQuery() {
           name
         }
         currency
+        price
         priceRUB
       }
       buyFor {
@@ -33,17 +31,32 @@ export function useGetItemsQuery() {
         price
       }
       fleaMarketFee
-      low24hPrice
-      high24hPrice
-      historicalPrices {
-        price
-        timestamp
-      }
       changeLast48h
-      changeLast48hPercent
     }
   }
- `)
+`
+
+export const GET_ITEM_HISTORICAL_PRICES = gql`
+  query getItemHistoricalPrices($id: ID) {
+    item(lang: fr, id: $id) {
+      name
+      historicalPrices {
+        timestamp
+        price
+      }
+    }
+  }
+`
+
+export function useGetItemsQuery() {
+  const { result, loading, error } = useQuery<UseGetItemsQueryType>(GET_ITEMS_QUERY)
 
   return { result, loading, error }
 }
+
+export function useGetItemHistoricalPricesQuery() {
+  const { result, load } = useLazyQuery<UseGetItemsQueryType>(GET_ITEM_HISTORICAL_PRICES)
+
+  return { resultHistoricalPrices: result, load }
+}
+

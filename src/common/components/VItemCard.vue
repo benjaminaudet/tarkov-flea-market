@@ -127,8 +127,8 @@ const handleChange = (tab) => {
         <VButton>
           <a :href="item.wikiLink" target="_blank">Page Wiki</a>
         </VButton>
-        <VButton>
-          <a @click="active = !active">Details</a>
+        <VButton :disabled="true" @click="active = !active">
+          <a>Details</a>
         </VButton>
       </div>
       <div v-else-if="activeTab === 'tradersSell'">

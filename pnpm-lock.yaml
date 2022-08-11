@@ -58,6 +58,7 @@ specifiers:
   vitest: ^0.18.1
   vue: ^3.2.37
   vue-demi: ^0.13.6
+  vue-google-charts: ^1.1.0
   vue-i18n: ^9.2.2
   vue-router: ^4.1.3
   vue-tsc: ^0.38.9
@@ -80,6 +81,7 @@ dependencies:
   react: 18.2.0
   vue: 3.2.37
   vue-demi: 0.13.6_vue@3.2.37
+  vue-google-charts: 1.1.0_vue@3.2.37
   vue-i18n: 9.2.2_vue@3.2.37
   vue-router: 4.1.3_vue@3.2.37
 
@@ -8177,6 +8179,14 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: true
+
+  /vue-google-charts/1.1.0_vue@3.2.37:
+    resolution: {integrity: sha512-wGAgAynIIUKmP5eJUFlx69e8gjIDpyqHlVsvFyrnd2tGZk3a6FI83dRhdssxPyOc9y41+2QEfqUV9SsR+n6s5A==}
+    peerDependencies:
+      vue: ^3.0.0-0 || ^2.6.0
+    dependencies:
+      vue: 3.2.37
+    dev: false
 
   /vue-i18n/9.2.2_vue@3.2.37:
     resolution: {integrity: sha512-yswpwtj89rTBhegUAv9Mu37LNznyu3NpyLQmozF3i1hYOhwpG8RjcjIFIIfnu+2MDZJGSZPXaKWvnQA71Yv9TQ==}

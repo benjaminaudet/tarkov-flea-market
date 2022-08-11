@@ -132,8 +132,25 @@ const sortOptions = [
       <div v-if="loading">
         <div>
           <n-space vertical>
-            <n-input type="text" placeholder="Search..." />
-            <n-grid x-gap="12" y-gap="12" cols="5 xs:1 s:2 m:2 l:3 xl:4 2xl:5" responsive="screen">
+            <n-input v-model:value.lazy="searchInput" type="text" placeholder="Search..." />
+            <n-grid x-gap="12" y-gap="12" cols="2">
+              <n-gi>
+                <n-select filterable placeholder="Choisir un filtre" :options="sortOptions" class="w-[100%]" default-value="avg24hPrice" @update:value="toggleSort">
+                  <template #arrow>
+                    <transition name="slide-left">
+                      <IconAscendingSort v-if="sortDirectionAsc" :style="`color: ${colors.teal[400]}`" />
+                      <IconDescendingSort v-else :style="`color: ${colors.teal[400]}`" />
+                    </transition>
+                  </template>
+                </n-select>
+              </n-gi>
+              <n-gi>
+                <n-button class="w-[100%]" @click="toggleSort(sortType, true)">
+                  {{ sortDirectionAsc ? 'Croissant' : 'Décroissant' }}
+                </n-button>
+              </n-gi>
+            </n-grid>
+            <n-grid x-gap="12" y-gap="12" cols="5 xs:1 s:2 m:2 l:3 xl:3 2xl:4" responsive="screen">
               <n-gi v-for="i in new Array(40)" :key="i">
                 <VItemCard :loading="loading" />
               </n-gi>
@@ -152,7 +169,7 @@ const sortOptions = [
           <n-input v-model:value.lazy="searchInput" type="text" placeholder="Search..." />
           <n-grid x-gap="12" y-gap="12" cols="2">
             <n-gi>
-              <n-select filterable placeholder="Choisir un filtre" :options="sortOptions" class="w-[100%]" @update:value="toggleSort">
+              <n-select filterable placeholder="Choisir un filtre" :options="sortOptions" class="w-[100%]" :default-value="avg24hPrice" @update:value="toggleSort">
                 <template #arrow>
                   <transition name="slide-left">
                     <IconAscendingSort v-if="sortDirectionAsc" :style="`color: ${colors.teal[400]}`" />
@@ -179,7 +196,7 @@ const sortOptions = [
             v-if="dataToUse" ref=""
             v-scroll="onScroll"
             class="overflow-y-scroll h-[100vh] pr-2"
-            x-gap="12" y-gap="12" cols="5 xs:1 s:2 m:2 l:3 xl:4 2xl:5"
+            x-gap="12" y-gap="12" cols="5 xs:1 s:2 m:2 l:3 xl:3 2xl:4"
             responsive="screen"
           >
             <n-gi v-for="item in dataToUse?.slice(0, pageIndex)" :key="item.id">

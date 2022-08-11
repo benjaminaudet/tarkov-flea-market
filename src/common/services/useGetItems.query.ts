@@ -35,6 +35,10 @@ export function useGetItemsQuery() {
       fleaMarketFee
       low24hPrice
       high24hPrice
+      historicalPrices {
+        price
+        timestamp
+      }
       changeLast48h
       changeLast48hPercent
     }

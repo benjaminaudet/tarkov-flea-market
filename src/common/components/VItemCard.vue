@@ -4,8 +4,8 @@ import { useElementVisibility } from '@vueuse/core'
 import _ from 'lodash'
 
 import colors from 'tailwindcss/colors'
+import { GChart } from 'vue-google-charts'
 import IconWIP from '~icons/wpf/maintenance'
-
 const props = defineProps({
   item: Object,
   loading: Boolean,
@@ -17,6 +17,7 @@ const activeTab = ref(DEFAULT_TAB_ACTIVE)
 const sellFor = ref([])
 const buyFor = ref([])
 const active = ref(false)
+const historicalPrices = ref([])
 
 if (props?.item) {
   sellFor.value = [...props.item.sellFor]
@@ -26,6 +27,9 @@ if (props?.item) {
   buyFor.value = buyFor.value.filter(el => el?.vendor?.name !== 'Marché')
   sellFor.value = _.orderBy(sellFor.value, 'priceRUB', 'desc')
   buyFor.value = _.orderBy(buyFor.value, 'priceRUB', 'desc')
+
+  // historicalPrices.value = props.item.historicalPrices.map(el => [(new Date(el.timestamp).getDay()), el.price])
+  historicalPrices.value = props.item.historicalPrices.map(el => [new Date(parseInt(el.timestamp)), el.price])
 }
 
 if (props?.globalActiveTab !== 'default')
@@ -53,7 +57,7 @@ const handleChange = (tab) => {
         <n-skeleton height="50px" width="50px" />
         <n-skeleton text />
       </template>
-      <n-tabs type="card" size="large" :tabs-padding="20" pane-style="padding: 20px;">
+      <n-tabs type="segment" size="large" :tabs-padding="20" pane-style="padding: 20px;">
         <n-tab-pane name="Price Info">
           <n-skeleton text />
           <n-skeleton text />
@@ -85,7 +89,7 @@ const handleChange = (tab) => {
           {{ item.name }}
         </div>
       </template>
-      <n-tabs :on-update:value="handleChange" :value="activeTab" type="card" size="small" :tabs-padding="20" class="mb-4">
+      <n-tabs :on-update:value="handleChange" :value="activeTab" type="segment" size="small" :tabs-padding="20" class="mb-4">
         <n-tab name="flea" class="active:text-teal-400">
           Flea Info
         </n-tab>
@@ -163,10 +167,12 @@ const handleChange = (tab) => {
           </n-gi>
         </n-grid>
       </div>
-      <div v-else-if="activeTab === 'quests'">
-        <IconWIP style="display:inline" />
-        Work in progress
-        <IconWIP style="display:inline" />
+      <div v-else-if="activeTab === 'quests'" class="text-white">
+        <GChart
+          type="LineChart"
+          :data="[['Day', 'Price'], ...historicalPrices]"
+          :options="{ curveType: 'function', colors: ['#fff'], backgroundColor: '#18181c', hAxis: { textStyle: { color: '#ffffff' } }, vAxis: { textStyle: { color: '#ffffff' } } }"
+        />
       </div>
     </n-card>
   </n-space>

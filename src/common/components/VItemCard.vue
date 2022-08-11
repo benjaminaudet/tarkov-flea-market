@@ -171,7 +171,7 @@ const handleChange = (tab) => {
         <GChart
           type="LineChart"
           :data="[['Day', 'Price'], ...historicalPrices]"
-          :options="{ curveType: 'function', colors: ['#fff'], backgroundColor: '#18181c', hAxis: { textStyle: { color: '#ffffff' } }, vAxis: { textStyle: { color: '#ffffff' } } }"
+          :options="{ curveType: 'function', colors: [colors.teal[400]], backgroundColor: '#18181c', hAxis: { textStyle: { color: colors.teal[400] } }, vAxis: { textStyle: { color: colors.teal[400] } } }"
         />
       </div>
     </n-card>

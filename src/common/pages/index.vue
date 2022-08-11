@@ -16,7 +16,7 @@ const searchInputDebounced = refDebounced(searchInput, 500) // fire finished
 const searchInputDebouncedLoading = refDebounced(searchInput, 50) // fire loading
 const data = ref([])
 const dataToUse = ref([])
-const sortDirectionAsc = ref(true)
+const sortDirectionAsc = ref(false)
 const sortType = ref('avg24hPrice')
 const scrollContainerRef = ref<HTMLElement | undefined>(undefined)
 const target = scrollContainerRef.value
@@ -53,19 +53,16 @@ watch(searchInputDebounced, () => {
     a.name.toLowerCase().replace(' ', '').includes(searchInput.value.toLowerCase().replace(' ', '')),
   )
   toggleSort(sortType.value)
-  console.log('finished')
 })
 
 watch(result, () => {
   if (result.value) {
     data.value = result.value.items
-    sort('avg24hPrice')
+    toggleSort('avg24hPrice')
   }
 })
 
 const sortByTraderToBuy = (key: string) => {
-  sortType.value = key
-  dataToUse.value = [...data.value]
   globalActiveTab.value = 'tradersBuy'
   dataToUse.value = dataToUse.value.filter((el) => {
     return el.buyFor.find(_el => _el.vendor.name === key)
@@ -78,8 +75,6 @@ const sortByTraderToBuy = (key: string) => {
 }
 
 const sortByTraderToSell = (key: string) => {
-  sortType.value = key
-  dataToUse.value = [...data.value]
   globalActiveTab.value = 'tradersSell'
   dataToUse.value = dataToUse.value.filter((el) => {
     return el.sellFor.find(_el => _el.vendor.name === key)
@@ -92,16 +87,16 @@ const sortByTraderToSell = (key: string) => {
 }
 
 const sort = (key: string) => {
-  sortType.value = key
-  dataToUse.value = [...data.value]
   globalActiveTab.value = 'flea'
   dataToUse.value = dataToUse.value.sort((a, b) =>
     sortDirectionAsc.value ? b[key] - a[key] : a[key] - b[key],
   )
 }
 
-const toggleSort = (key) => {
-  if (key === sortType.value)
+const toggleSort = (key, force = false) => {
+  dataToUse.value = [...data.value]
+  sortType.value = key
+  if (key === sortType.value || force)
     sortDirectionAsc.value = !sortDirectionAsc.value
   if (['avg24hPrice', 'changeLast48h'].includes(key))
     sort(key.split(':')[0])
@@ -112,22 +107,22 @@ const toggleSort = (key) => {
 }
 
 const sortOptions = [
-  { label: 'Trier par prix moyen 24h', value: 'avg24hPrice' },
-  { label: 'Trier par variation du prix dernières 48h', value: 'changeLast48h' },
-  { label: 'Trier avec la Toubib pour vendre', value: 'La Toubib:sell' },
-  { label: 'Trier avec Jaeger pour vendre', value: 'Jaeger:sell' },
-  { label: 'Trier avec Peacekeeper pour vendre', value: 'Peacekeeper:sell' },
-  { label: 'Trier avec Ragman pour vendre', value: 'Ragman:sell' },
-  { label: 'Trier avec Fence pour vendre', value: 'Fence:sell' },
-  { label: 'Trier avec Skier pour vendre', value: 'Skier:sell' },
-  { label: 'Trier avec Prapor pour vendre', value: 'Prapor:sell' },
-  { label: 'Trier avec la Toubib pour acheter', value: 'La Toubib:buy' },
-  { label: 'Trier avec Jaeger pour acheter', value: 'Jaeger:buy' },
-  { label: 'Trier avec Peacekeeper pour acheter', value: 'Peacekeeper:buy' },
-  { label: 'Trier avec Ragman pour acheter', value: 'Ragman:buy' },
-  { label: 'Trier avec Fence pour acheter', value: 'Fence:buy' },
-  { label: 'Trier avec Skier pour acheter', value: 'Skier:buy' },
-  { label: 'Trier avec Prapor pour acheter', value: 'Prapor:buy' },
+  { label: 'Prix moyen 24h', value: 'avg24hPrice' },
+  { label: 'Variation du prix dernières 48h', value: 'changeLast48h' },
+  { label: 'La Toubib pour vendre', value: 'La Toubib:sell' },
+  { label: 'Jaeger pour vendre', value: 'Jaeger:sell' },
+  { label: 'Peacekeeper pour vendre', value: 'Peacekeeper:sell' },
+  { label: 'Ragman pour vendre', value: 'Ragman:sell' },
+  { label: 'Fence pour vendre', value: 'Fence:sell' },
+  { label: 'Skier pour vendre', value: 'Skier:sell' },
+  { label: 'Prapor pour vendre', value: 'Prapor:sell' },
+  { label: 'La Toubib pour acheter', value: 'La Toubib:buy' },
+  { label: 'Jaeger pour acheter', value: 'Jaeger:buy' },
+  { label: 'Peacekeeper pour acheter', value: 'Peacekeeper:buy' },
+  { label: 'Ragman pour acheter', value: 'Ragman:buy' },
+  { label: 'Fence pour acheter', value: 'Fence:buy' },
+  { label: 'Skier pour acheter', value: 'Skier:buy' },
+  { label: 'Prapor pour acheter', value: 'Prapor:buy' },
 ]
 </script>
 
@@ -155,14 +150,23 @@ const sortOptions = [
       <div>
         <n-space vertical>
           <n-input v-model:value.lazy="searchInput" type="text" placeholder="Search..." />
-          <n-select filterable placeholder="Choisir un filtre" :options="sortOptions" @update:value="toggleSort">
-            <template #arrow>
-              <transition name="slide-left">
-                <IconAscendingSort v-if="sortDirectionAsc" :style="`color: ${colors.teal[400]}`" />
-                <IconDescendingSort v-else :style="`color: ${colors.teal[400]}`" />
-              </transition>
-            </template>
-          </n-select>
+          <n-grid x-gap="12" y-gap="12" cols="2">
+            <n-gi>
+              <n-select filterable placeholder="Choisir un filtre" :options="sortOptions" class="w-[100%]" @update:value="toggleSort">
+                <template #arrow>
+                  <transition name="slide-left">
+                    <IconAscendingSort v-if="sortDirectionAsc" :style="`color: ${colors.teal[400]}`" />
+                    <IconDescendingSort v-else :style="`color: ${colors.teal[400]}`" />
+                  </transition>
+                </template>
+              </n-select>
+            </n-gi>
+            <n-gi>
+              <n-button class="w-[100%]" @click="toggleSort(sortType, true)">
+                {{ sortDirectionAsc ? 'Croissant' : 'Décroissant' }}
+              </n-button>
+            </n-gi>
+          </n-grid>
           <n-back-top
             :listen-to="target"
             :bottom="220"

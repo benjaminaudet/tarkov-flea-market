@@ -16,13 +16,14 @@ const DEFAULT_TAB_ACTIVE = 'flea'
 const activeTab = ref(DEFAULT_TAB_ACTIVE)
 const sellFor = ref([])
 const buyFor = ref([])
+const active = ref(false)
 
 if (props?.item) {
   sellFor.value = [...props.item.sellFor]
   buyFor.value = [...props.item.buyFor]
 
-  sellFor.value.pop()
-  buyFor.value.pop()
+  sellFor.value = sellFor.value.filter(el => el?.vendor?.name !== 'Marché')
+  buyFor.value = buyFor.value.filter(el => el?.vendor?.name !== 'Marché')
   sellFor.value = _.orderBy(sellFor.value, 'priceRUB', 'desc')
   buyFor.value = _.orderBy(buyFor.value, 'priceRUB', 'desc')
 }
@@ -91,7 +92,7 @@ const handleChange = (tab) => {
         <n-tab name="tradersSell">
           Traders vendre
         </n-tab>
-        <n-tab name="tradersBuy" :disabled="buyFor.length <= 0">
+        <n-tab name="tradersBuy" :disabled="buyFor.length < 1">
           Traders acheter
         </n-tab>
         <n-tab name="quests">
@@ -125,6 +126,9 @@ const handleChange = (tab) => {
         </n-tag>
         <VButton>
           <a :href="item.wikiLink" target="_blank">Page Wiki</a>
+        </VButton>
+        <VButton>
+          <a @click="active = !active">Details</a>
         </VButton>
       </div>
       <div v-else-if="activeTab === 'tradersSell'">
@@ -166,6 +170,16 @@ const handleChange = (tab) => {
       </div>
     </n-card>
   </n-space>
+  <n-drawer
+    v-model:show="active"
+    default-height="80vh"
+    placement="top"
+    resizable
+  >
+    <n-drawer-content title="Stoner">
+      Stoner is a 1965 novel by the American writer John Williams.
+    </n-drawer-content>
+  </n-drawer>
 </template>
 
 <style>

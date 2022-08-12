@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, refDebounced } from '@vueuse/core'
+import { refDebounced } from '@vueuse/core'
 import type { UseScrollReturn } from '@vueuse/core'
 import { vScroll } from '@vueuse/components'
 import colors from 'tailwindcss/colors'
@@ -28,7 +28,7 @@ const scrollContainerRef = ref<HTMLElement | undefined>(undefined)
 const target = scrollContainerRef.value
 const globalActiveTab = ref('default')
 const active = ref(false)
-const itemDetails = reactive({ name: '', historicalPrices: [] })
+// const itemDetails = reactive({ name: '', historicalPrices: [] })
 
 const onScroll = (state: UseScrollReturn) => {
   if (state.arrivedState.bottom)
@@ -110,11 +110,12 @@ const sort = (key: string) => {
   )
 }
 
-const toggleSort = (key, force = false) => {
+const toggleSort = (key, _, force = false) => {
   dataToUse.value = [...data.value]
-  sortType.value = key
-  if (key === sortType.value || force)
+  if (key === sortType.value || force) {
     sortDirectionAsc.value = !sortDirectionAsc.value
+  }
+  sortType.value = key
   if (['avg24hPrice', 'changeLast48h'].includes(key))
     sort(key.split(':')[0])
   else if (key.includes('sell'))
@@ -161,7 +162,8 @@ console.log(resultHistoricalPrices.value)
             <n-input v-model:value.lazy="searchInput" type="text" placeholder="Search..." />
             <n-grid x-gap="12" y-gap="12" cols="2">
               <n-gi>
-                <n-select filterable placeholder="Choisir un filtre" :options="sortOptions" class="w-[100%]" default-value="avg24hPrice" @update:value="toggleSort">
+                <n-select filterable placeholder="Choisir un filtre" :options="sortOptions" class="w-[100%]"
+                  default-value="avg24hPrice" @update:value="toggleSort">
                   <template #arrow>
                     <transition name="slide-left">
                       <IconAscendingSort v-if="sortDirectionAsc" :style="`color: ${colors.teal[400]}`" />
@@ -171,7 +173,7 @@ console.log(resultHistoricalPrices.value)
                 </n-select>
               </n-gi>
               <n-gi>
-                <n-button class="w-[100%]" @click="toggleSort(sortType, true)">
+                <n-button class="w-[100%]" @click="toggleSort(sortType, null, true)">
                   {{ sortDirectionAsc ? 'Croissant' : 'Décroissant' }}
                 </n-button>
               </n-gi>
@@ -195,7 +197,8 @@ console.log(resultHistoricalPrices.value)
           <n-input v-model:value.lazy="searchInput" type="text" placeholder="Search..." />
           <n-grid x-gap="12" y-gap="12" cols="2">
             <n-gi>
-              <n-select filterable placeholder="Choisir un filtre" :options="sortOptions" class="w-[100%]" :default-value="avg24hPrice" @update:value="toggleSort">
+              <n-select filterable placeholder="Choisir un filtre" :options="sortOptions" class="w-[100%]"
+                :default-value="avg24hPrice" @update:value="toggleSort">
                 <template #arrow>
                   <transition name="slide-left">
                     <IconAscendingSort v-if="sortDirectionAsc" :style="`color: ${colors.teal[400]}`" />
@@ -210,32 +213,17 @@ console.log(resultHistoricalPrices.value)
               </n-button>
             </n-gi>
           </n-grid>
-          <n-back-top
-            :listen-to="target"
-            :bottom="220"
-            :visibility-height="10"
-            :style="{
-              transition: 'all .3s cubic-bezier(.4, 0, .2, 1)',
-            }"
-          />
-          <n-grid
-            v-if="dataToUse" ref=""
-            v-scroll="onScroll"
-            class="overflow-y-scroll h-[100vh] pr-2"
-            x-gap="12" y-gap="12" cols="5 xs:1 s:1 m:1 l:2 xl:3 2xl:4 3xl:4"
-            responsive="screen"
-          >
+          <n-back-top :listen-to="target" :bottom="220" :visibility-height="10" :style="{
+            transition: 'all .3s cubic-bezier(.4, 0, .2, 1)',
+          }" />
+          <n-grid v-if="dataToUse" ref="" v-scroll="onScroll" class="overflow-y-scroll h-[100vh] pr-2" x-gap="12"
+            y-gap="12" cols="5 xs:1 s:1 m:1 l:2 xl:3 2xl:4 3xl:4" responsive="screen">
             <n-gi v-for="item in dataToUse?.slice(0, pageIndex)" :key="item.id">
               <VItemCard :loading="loading" :item="item" :global-active-tab="globalActiveTab" :open-graph="openGraph" />
             </n-gi>
           </n-grid>
         </n-space>
-        <n-drawer
-          v-model:show="active"
-          default-height="80vh"
-          placement="top"
-          resizable
-        >
+        <n-drawer v-model:show="active" default-height="80vh" placement="top" resizable>
           <n-drawer-content title="Graphique prix de cette dernière semaine">
             <div class="text-white">
               <h1>{{ itemDetails.name }}</h1>

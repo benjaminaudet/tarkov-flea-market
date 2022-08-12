@@ -44,6 +44,20 @@ const getBuyForObjectByTrader = (trader) => {
 const handleChange = (tab) => {
   activeTab.value = tab
 }
+
+const getCurrencyCharacter = (currency: string) => {
+  switch (currency) {
+    case 'USD':
+      return '$'
+    case 'RUB':
+      return '₽'
+    case 'EUR':
+      return '€'
+    default:
+      return '₽'
+  }
+}
+
 </script>
 
 <template>
@@ -80,7 +94,8 @@ const handleChange = (tab) => {
           {{ item.name }}
         </div>
       </template>
-      <n-tabs :on-update:value="handleChange" :value="activeTab" type="line" size="small" :tabs-padding="20" class="mb-4">
+      <n-tabs :on-update:value="handleChange" :value="activeTab" type="line" size="small" :tabs-padding="20"
+        class="mb-4">
         <n-tab name="tradersSell">
           Traders vendre
         </n-tab>
@@ -101,10 +116,8 @@ const handleChange = (tab) => {
               Prix moyen 24h
             </n-tag>
             <n-tag :bordered="false" type="success" class="bold rounded-l-none w-[50%]">
-              <n-number-animation
-                ref="numberAnimationInstRef"
-                :duration="300" show-separator :from="0" :to="item.avg24hPrice"
-              />
+              <n-number-animation ref="numberAnimationInstRef" :duration="300" show-separator :from="0"
+                :to="item.avg24hPrice" />
               ₽
             </n-tag>
           </n-gi>
@@ -113,10 +126,8 @@ const handleChange = (tab) => {
           Variation prix 48h
         </n-tag>
         <n-tag :bordered="false" type="success" class="bold rounded-l-none w-[50%]">
-          <n-number-animation
-            ref="numberAnimationInstRef"
-            :duration="300" show-separator :from="0" :to="item.changeLast48h"
-          />
+          <n-number-animation ref="numberAnimationInstRef" :duration="300" show-separator :from="0"
+            :to="item.changeLast48h" />
           ₽
         </n-tag>
       </div>
@@ -126,10 +137,8 @@ const handleChange = (tab) => {
             Prix moyen Flea Market 24h
           </n-tag>
           <n-tag :bordered="false" type="success" class="bold rounded-l-none w-[50%]">
-            <n-number-animation
-              ref="numberAnimationInstRef"
-              :duration="300" show-separator :from="0" :to="item.avg24hPrice"
-            />
+            <n-number-animation ref="numberAnimationInstRef" :duration="300" show-separator :from="0"
+              :to="item.avg24hPrice" />
             ₽
           </n-tag>
         </div>
@@ -139,11 +148,9 @@ const handleChange = (tab) => {
               {{ trader?.vendor?.name }}
             </n-tag>
             <n-tag :bordered="false" type="success" class="bold rounded-l-none rounded-r-none w-[50%] text-center">
-              <n-number-animation
-                ref="numberAnimationInstRef"
-                :duration="300" show-separator :from="0" :to="trader?.price || 0"
-              />
-              {{ trader?.currency }}
+              <n-number-animation ref="numberAnimationInstRef" :duration="300" show-separator :from="0"
+                :to="trader?.price || 0" />
+              {{ getCurrencyCharacter(trader?.currency) }}
             </n-tag>
           </n-gi>
         </n-grid>
@@ -155,11 +162,9 @@ const handleChange = (tab) => {
               {{ trader?.vendor?.name }}
             </n-tag>
             <n-tag :bordered="false" type="warning" class="bold rounded-l-none w-[50%] text-center">
-              <n-number-animation
-                ref="numberAnimationInstRef"
-                :duration="300" show-separator :from="0" :to="trader?.price"
-              />
-              {{ trader?.currency }}
+              <n-number-animation ref="numberAnimationInstRef" :duration="300" show-separator :from="0"
+                :to="trader?.price" />
+              {{ getCurrencyCharacter(trader?.currency) }}
             </n-tag>
           </n-gi>
         </n-grid>

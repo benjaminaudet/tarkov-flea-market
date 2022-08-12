@@ -181,7 +181,7 @@ const getCurrencyCharacter = (currency: string) => {
       </VButton>
       <VButton @click="openGraph(item)" disabled>
         <a>Graphique prix moyen hebdomadaire</a>
-        <VIconWIP></VIconWIP>
+        <IconWIP class="inline ml-2 text-[0.6rem]"></IconWIP>
       </VButton>
     </n-card>
   </n-space>

@@ -28,7 +28,8 @@ const scrollContainerRef = ref<HTMLElement | undefined>(undefined)
 const target = scrollContainerRef.value
 const globalActiveTab = ref('default')
 const active = ref(false)
-// const itemDetails = reactive({ name: '', historicalPrices: [] })
+const itemDetails = ref({})
+const itemDetailsHistoricalPrices = ref([])
 
 const onScroll = (state: UseScrollReturn) => {
   if (state.arrivedState.bottom)
@@ -64,19 +65,19 @@ watch(searchInputDebounced, () => {
 })
 
 watch(result, () => {
-  if (result.value) {
-    loadingBar.finish()
-    data.value = result.value.items
-    toggleSort('avg24hPrice')
-  }
+  if (!result.value) {
+    return
+  } loadingBar.finish()
+  data.value = result.value.items
+  toggleSort('avg24hPrice')
 })
 
 watch(resultHistoricalPrices, () => {
-  if (resultHistoricalPrices.value) {
-    console.log('yeah')
-    itemDetails.value = { name: resultHistoricalPrices.value.item, historicalPrices: [...resultHistoricalPrices.value.item.historicalPrices.map(el => [new Date(parseInt(el.timestamp)), el.price])] }
-    console.log(itemDetails.value)
+  if (!resultHistoricalPrices.value) {
+    return
   }
+  itemDetails.value = resultHistoricalPrices.value.item
+  itemDetailsHistoricalPrices.value = [...resultHistoricalPrices.value.item.historicalPrices.map(el => [new Date(parseInt(el.timestamp)), el.price])]
 })
 
 const sortByTraderToBuy = (key: string) => {
@@ -147,7 +148,6 @@ const sortOptions = [
   { label: 'Skier pour acheter', value: 'Skier:buy' },
   { label: 'Prapor pour acheter', value: 'Prapor:buy' },
 ]
-console.log(resultHistoricalPrices.value)
 </script>
 
 <template>
@@ -227,11 +227,8 @@ console.log(resultHistoricalPrices.value)
           <n-drawer-content title="Graphique prix de cette dernière semaine">
             <div class="text-white">
               <h1>{{ itemDetails.name }}</h1>
-              <!-- <GChart
-                type="LineChart"
-                :data="[['Day', 'Price'], ...itemDetails.historicalPrices]"
-                :options="{ curveType: 'function', colors: [colors.teal[400]], backgroundColor: '#18181c', hAxis: { textStyle: { color: colors.teal[400] } }, vAxis: { textStyle: { color: colors.teal[400] } } }"
-              /> -->
+              <GChart type="LineChart" :data="[['Day', 'Price'], ...itemDetailsHistoricalPrices]"
+                :options="{ curveType: 'function', colors: [colors.teal[400]], backgroundColor: '#18181c', hAxis: { textStyle: { color: colors.teal[400] } }, vAxis: { textStyle: { color: colors.teal[400] } } }" />
             </div>
           </n-drawer-content>
         </n-drawer>

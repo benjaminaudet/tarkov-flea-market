@@ -12,15 +12,12 @@ provide(ApolloClients, {
 // you can use this to manipulate the document head in any components,
 // they will be rendered correctly in the html results with vite-ssg
 useHead({
-  title: 'Vitesse Modular NaiveUI',
-  meta: [
-    { name: 'description', content: 'Opinionated Vite Starter Template with modular architecture design' },
-  ],
+  title: 'Tarkov Dashboard',
   link: [
     {
       rel: 'icon',
-      type: 'image/svg+xml',
-      href: computed(() => preferredDark.value ? '/favicon-dark.svg' : '/favicon.svg'),
+      type: 'image/png',
+      href: '/favicon-32x32.png',
     },
   ],
 })

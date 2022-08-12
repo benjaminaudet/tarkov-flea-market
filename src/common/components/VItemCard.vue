@@ -4,20 +4,19 @@ import { useElementVisibility } from '@vueuse/core'
 import _ from 'lodash'
 
 import colors from 'tailwindcss/colors'
-import { GChart } from 'vue-google-charts'
 import IconWIP from '~icons/wpf/maintenance'
+
 const props = defineProps({
   item: Object,
   loading: Boolean,
   globalActiveTab: String,
+  openGraph: Function,
 })
 
-const DEFAULT_TAB_ACTIVE = 'flea'
+const DEFAULT_TAB_ACTIVE = 'tradersSell'
 const activeTab = ref(DEFAULT_TAB_ACTIVE)
 const sellFor = ref([])
 const buyFor = ref([])
-const active = ref(false)
-const historicalPrices = ref([])
 
 if (props?.item) {
   sellFor.value = [...props.item.sellFor]
@@ -27,9 +26,6 @@ if (props?.item) {
   buyFor.value = buyFor.value.filter(el => el?.vendor?.name !== 'Marché')
   sellFor.value = _.orderBy(sellFor.value, 'priceRUB', 'desc')
   buyFor.value = _.orderBy(buyFor.value, 'priceRUB', 'desc')
-
-  // historicalPrices.value = props.item.historicalPrices.map(el => [(new Date(el.timestamp).getDay()), el.price])
-  historicalPrices.value = props.item.historicalPrices.map(el => [new Date(parseInt(el.timestamp)), el.price])
 }
 
 if (props?.globalActiveTab !== 'default')
@@ -48,6 +44,20 @@ const getBuyForObjectByTrader = (trader) => {
 const handleChange = (tab) => {
   activeTab.value = tab
 }
+
+const getCurrencyCharacter = (currency: string) => {
+  switch (currency) {
+    case 'USD':
+      return '$'
+    case 'RUB':
+      return '₽'
+    case 'EUR':
+      return '€'
+    default:
+      return '₽'
+  }
+}
+
 </script>
 
 <template>
@@ -57,7 +67,7 @@ const handleChange = (tab) => {
         <n-skeleton height="50px" width="50px" />
         <n-skeleton text />
       </template>
-      <n-tabs type="segment" size="large" :tabs-padding="20" pane-style="padding: 20px;">
+      <n-tabs type="line" size="large" :tabs-padding="20" pane-style="padding: 20px;">
         <n-tab-pane name="Price Info">
           <n-skeleton text />
           <n-skeleton text />
@@ -68,11 +78,6 @@ const handleChange = (tab) => {
           <n-skeleton text />
         </n-tab-pane>
         <n-tab-pane name="Traders acheter">
-          <n-skeleton text />
-          <n-skeleton text />
-          <n-skeleton text />
-        </n-tab-pane>
-        <n-tab-pane name="Graphique">
           <n-skeleton text />
           <n-skeleton text />
           <n-skeleton text />
@@ -89,19 +94,20 @@ const handleChange = (tab) => {
           {{ item.name }}
         </div>
       </template>
-      <n-tabs :on-update:value="handleChange" :value="activeTab" type="segment" size="small" :tabs-padding="20" class="mb-4">
-        <n-tab name="flea" class="active:text-teal-400">
-          Flea Info
-        </n-tab>
+      <n-tabs :on-update:value="handleChange" :value="activeTab" type="line" size="small" :tabs-padding="20"
+        class="mb-4">
         <n-tab name="tradersSell">
           Traders vendre
         </n-tab>
         <n-tab name="tradersBuy" :disabled="buyFor.length < 1">
           Traders acheter
         </n-tab>
-        <n-tab name="graph">
-          Graphique
+        <n-tab name="flea" class="active:text-teal-400">
+          Flea Info
         </n-tab>
+        <!-- <n-tab name="graph">
+          Graphique
+        </n-tab> -->
       </n-tabs>
       <div v-if="activeTab === 'flea'">
         <n-grid x-gap="12" y-gap="12" cols="1">
@@ -110,10 +116,8 @@ const handleChange = (tab) => {
               Prix moyen 24h
             </n-tag>
             <n-tag :bordered="false" type="success" class="bold rounded-l-none w-[50%]">
-              <n-number-animation
-                ref="numberAnimationInstRef"
-                :duration="300" show-separator :from="0" :to="item.avg24hPrice"
-              />
+              <n-number-animation ref="numberAnimationInstRef" :duration="300" show-separator :from="0"
+                :to="item.avg24hPrice" />
               ₽
             </n-tag>
           </n-gi>
@@ -122,31 +126,31 @@ const handleChange = (tab) => {
           Variation prix 48h
         </n-tag>
         <n-tag :bordered="false" type="success" class="bold rounded-l-none w-[50%]">
-          <n-number-animation
-            ref="numberAnimationInstRef"
-            :duration="300" show-separator :from="0" :to="item.changeLast48h"
-          />
+          <n-number-animation ref="numberAnimationInstRef" :duration="300" show-separator :from="0"
+            :to="item.changeLast48h" />
           ₽
         </n-tag>
-        <VButton>
-          <a :href="item.wikiLink" target="_blank">Page Wiki</a>
-        </VButton>
-        <VButton :disabled="true" @click="active = !active">
-          <a>Details</a>
-        </VButton>
       </div>
       <div v-else-if="activeTab === 'tradersSell'">
+        <div class="mb-[12px]">
+          <n-tag :bordered="false" class="rounded-r-none w-[50%]">
+            Prix moyen Flea Market 24h
+          </n-tag>
+          <n-tag :bordered="false" type="success" class="bold rounded-l-none w-[50%]">
+            <n-number-animation ref="numberAnimationInstRef" :duration="300" show-separator :from="0"
+              :to="item.avg24hPrice" />
+            ₽
+          </n-tag>
+        </div>
         <n-grid x-gap="12" y-gap="12" cols="1">
           <n-gi v-for="trader in sellFor" :key="`${item.id}:${trader}`">
             <n-tag :bordered="false" class="rounded-r-none w-[50%] text-center">
               {{ trader?.vendor?.name }}
             </n-tag>
             <n-tag :bordered="false" type="success" class="bold rounded-l-none rounded-r-none w-[50%] text-center">
-              <n-number-animation
-                ref="numberAnimationInstRef"
-                :duration="300" show-separator :from="0" :to="trader?.priceRUB || 0"
-              />
-              {{ trader?.currency }}
+              <n-number-animation ref="numberAnimationInstRef" :duration="300" show-separator :from="0"
+                :to="trader?.price || 0" />
+              {{ getCurrencyCharacter(trader?.currency) }}
             </n-tag>
           </n-gi>
         </n-grid>
@@ -158,34 +162,21 @@ const handleChange = (tab) => {
               {{ trader?.vendor?.name }}
             </n-tag>
             <n-tag :bordered="false" type="warning" class="bold rounded-l-none w-[50%] text-center">
-              <n-number-animation
-                ref="numberAnimationInstRef"
-                :duration="300" show-separator :from="0" :to="trader?.price"
-              />
-              {{ trader?.currency }}
+              <n-number-animation ref="numberAnimationInstRef" :duration="300" show-separator :from="0"
+                :to="trader?.price" />
+              {{ getCurrencyCharacter(trader?.currency) }}
             </n-tag>
           </n-gi>
         </n-grid>
       </div>
-      <div v-else-if="activeTab === 'graph'" class="text-white">
-        <GChart
-          type="LineChart"
-          :data="[['Day', 'Price'], ...historicalPrices]"
-          :options="{ curveType: 'function', colors: [colors.teal[400]], backgroundColor: '#18181c', hAxis: { textStyle: { color: colors.teal[400] } }, vAxis: { textStyle: { color: colors.teal[400] } } }"
-        />
-      </div>
+      <VButton>
+        <a :href="item.wikiLink" target="_blank">Page Wiki</a>
+      </VButton>
+      <VButton @click="openGraph(item)">
+        <a>Details</a>
+      </VButton>
     </n-card>
   </n-space>
-  <n-drawer
-    v-model:show="active"
-    default-height="80vh"
-    placement="top"
-    resizable
-  >
-    <n-drawer-content title="Stoner">
-      Stoner is a 1965 novel by the American writer John Williams.
-    </n-drawer-content>
-  </n-drawer>
 </template>
 
 <style>

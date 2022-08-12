@@ -115,7 +115,7 @@ export default defineConfig({
     // https://github.com/antfu/vite-plugin-pwa
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.svg', 'safari-pinned-tab.svg'],
+      includeAssets: ['favicon-32x32.png', 'safari-pinned-tab.svg'],
       manifest: {
         name: 'Vitesse',
         short_name: 'Vitesse',

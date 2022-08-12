@@ -66,18 +66,22 @@ watch(searchInputDebounced, () => {
   toggleSort(sortType.value, null, false)
 })
 
-watch(result, () => {
-  if (!result.value) {
-    return
-  } loadingBar.finish()
+const watchSafe = (toWatch, cb) => {
+  watch(toWatch, () => {
+    if (!toWatch.value) {
+      return
+    }
+    cb()
+  })
+}
+
+watchSafe(result, () => {
+  loadingBar.finish()
   data.value = result.value.items
   toggleSort('avg24hPrice', null, false)
 })
 
-watch(resultHistoricalPrices, () => {
-  if (!resultHistoricalPrices.value) {
-    return
-  }
+watchSafe(resultHistoricalPrices, () => {
   itemDetails.value = resultHistoricalPrices.value.item
   itemDetailsHistoricalPrices.value = [...resultHistoricalPrices.value.item.historicalPrices.map(el => [new Date(parseInt(el.timestamp)), el.price])]
   active.value = true

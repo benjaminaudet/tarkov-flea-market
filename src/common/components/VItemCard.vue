@@ -105,9 +105,6 @@ const getCurrencyCharacter = (currency: string) => {
         <n-tab name="flea" class="active:text-teal-400">
           Flea Info
         </n-tab>
-        <!-- <n-tab name="graph">
-          Graphique
-        </n-tab> -->
       </n-tabs>
       <div v-if="activeTab === 'flea'">
         <n-grid x-gap="12" y-gap="12" cols="1">
@@ -156,6 +153,16 @@ const getCurrencyCharacter = (currency: string) => {
         </n-grid>
       </div>
       <div v-else-if="activeTab === 'tradersBuy'">
+        <div class="mb-[12px]">
+          <n-tag :bordered="false" class="rounded-r-none w-[50%]">
+            Prix moyen Flea Market 24h
+          </n-tag>
+          <n-tag :bordered="false" type="warning" class="bold rounded-l-none w-[50%]">
+            <n-number-animation ref="numberAnimationInstRef" :duration="300" show-separator :from="0"
+              :to="item.avg24hPrice" />
+            ₽
+          </n-tag>
+        </div>
         <n-grid x-gap="12" y-gap="12" cols="1">
           <n-gi v-for="trader in buyFor" :key="`${item.id}:${trader}`">
             <n-tag :bordered="false" class="rounded-r-none w-[50%] text-center">
@@ -172,8 +179,9 @@ const getCurrencyCharacter = (currency: string) => {
       <VButton>
         <a :href="item.wikiLink" target="_blank">Page Wiki</a>
       </VButton>
-      <VButton @click="openGraph(item)">
+      <VButton @click="openGraph(item)" disabled>
         <a>Graphique prix moyen hebdomadaire</a>
+        <VIconWIP></VIconWIP>
       </VButton>
     </n-card>
   </n-space>

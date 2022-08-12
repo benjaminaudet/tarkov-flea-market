@@ -173,7 +173,7 @@ const getCurrencyCharacter = (currency: string) => {
         <a :href="item.wikiLink" target="_blank">Page Wiki</a>
       </VButton>
       <VButton @click="openGraph(item)">
-        <a>Details</a>
+        <a>Graphique prix moyen hebdomadaire</a>
       </VButton>
     </n-card>
   </n-space>

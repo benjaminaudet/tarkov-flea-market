@@ -51,17 +51,19 @@ const increasePageIndex = () => {
 }
 
 watch(searchInputDebouncedLoading, () => {
-  console.log('loading')
+  loadingBar.start()
 })
 
 watch(searchInputDebounced, () => {
-  if (searchInput.value === '')
+  if (searchInput.value === '') {
     data.value = result.value.items
-
-  data.value = result.value.items.filter(a =>
-    a.name.toLowerCase().replace(' ', '').includes(searchInput.value.toLowerCase().replace(' ', '')),
-  )
-  toggleSort(sortType.value)
+  } else {
+    data.value = result.value.items.filter(a =>
+      a.name.toLowerCase().replace(' ', '').replace('-', '').includes(searchInput.value.toLowerCase().replace(' ', '').replace('-', '')),
+    )
+  }
+  loadingBar.finish()
+  toggleSort(sortType.value, null, false)
 })
 
 watch(result, () => {
@@ -69,7 +71,7 @@ watch(result, () => {
     return
   } loadingBar.finish()
   data.value = result.value.items
-  toggleSort('avg24hPrice')
+  toggleSort('avg24hPrice', null, false)
 })
 
 watch(resultHistoricalPrices, () => {
@@ -78,6 +80,7 @@ watch(resultHistoricalPrices, () => {
   }
   itemDetails.value = resultHistoricalPrices.value.item
   itemDetailsHistoricalPrices.value = [...resultHistoricalPrices.value.item.historicalPrices.map(el => [new Date(parseInt(el.timestamp)), el.price])]
+  active.value = true
 })
 
 const sortByTraderToBuy = (key: string) => {
@@ -126,7 +129,6 @@ const toggleSort = (key, _, force = false) => {
 }
 
 const openGraph = (item) => {
-  active.value = true
   load(GET_ITEM_HISTORICAL_PRICES, { id: item.id })
 }
 
@@ -144,7 +146,6 @@ const sortOptions = [
   { label: 'Jaeger pour acheter', value: 'Jaeger:buy' },
   { label: 'Peacekeeper pour acheter', value: 'Peacekeeper:buy' },
   { label: 'Ragman pour acheter', value: 'Ragman:buy' },
-  { label: 'Fence pour acheter', value: 'Fence:buy' },
   { label: 'Skier pour acheter', value: 'Skier:buy' },
   { label: 'Prapor pour acheter', value: 'Prapor:buy' },
 ]
@@ -225,11 +226,14 @@ const sortOptions = [
         </n-space>
         <n-drawer v-model:show="active" default-height="80vh" placement="top" resizable>
           <n-drawer-content title="Graphique prix de cette dernière semaine">
-            <div class="text-white">
-              <h1>{{ itemDetails.name }}</h1>
-              <GChart type="LineChart" :data="[['Day', 'Price'], ...itemDetailsHistoricalPrices]"
-                :options="{ curveType: 'function', colors: [colors.teal[400]], backgroundColor: '#18181c', hAxis: { textStyle: { color: colors.teal[400] } }, vAxis: { textStyle: { color: colors.teal[400] } } }" />
+            <div class="text-white mb-[30px] flex flex-col space-y-5">
+              <img :src="itemDetails.gridImageLink" class="object-scale-down h-[20vh]">
+              <div class="text-xl text-center">
+                {{ itemDetails.name }}
+              </div>
             </div>
+            <GChart type="LineChart" :data="[['Day', 'Price'], ...itemDetailsHistoricalPrices]"
+              :options="{ curveType: 'function', colors: [colors.teal[400]], backgroundColor: '#18181c', hAxis: { textStyle: { color: colors.teal[400] } }, vAxis: { textStyle: { color: colors.teal[400] } } }" />
           </n-drawer-content>
         </n-drawer>
       </div>

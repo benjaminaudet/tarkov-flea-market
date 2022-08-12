@@ -40,6 +40,7 @@ export const GET_ITEM_HISTORICAL_PRICES = gql`
   query getItemHistoricalPrices($id: ID) {
     item(lang: fr, id: $id) {
       name
+      gridImageLink
       historicalPrices {
         timestamp
         price

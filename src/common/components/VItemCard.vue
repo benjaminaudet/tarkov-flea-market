@@ -97,10 +97,10 @@ const getCurrencyCharacter = (currency: string) => {
       <n-tabs :on-update:value="handleChange" :value="activeTab" type="line" size="small" :tabs-padding="20"
         class="mb-4">
         <n-tab name="tradersSell">
-          Traders vendre
+          Prix Traders pour vendre
         </n-tab>
         <n-tab name="tradersBuy" :disabled="buyFor.length < 1">
-          Traders acheter
+          Prix Traders pour acheter
         </n-tab>
         <n-tab name="flea" class="active:text-teal-400">
           Flea Info

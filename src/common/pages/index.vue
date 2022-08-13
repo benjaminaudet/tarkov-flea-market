@@ -5,7 +5,7 @@ import { vScroll } from '@vueuse/components'
 import colors from 'tailwindcss/colors'
 import { useLoadingBar } from 'naive-ui'
 import { GChart } from 'vue-google-charts'
-import { GET_ITEM_HISTORICAL_PRICES, useGetItemHistoricalPricesQuery, useGetItemsQuery } from '~/common/services/useGetItems.query'
+import { GET_ITEM_HISTORICAL_PRICES_BY_ID, useGetItemHistoricalPricesQuery, useGetItemsQuery } from '~/common/services/useGetItems.query'
 
 import IconAscendingSort from '~icons/bi/sort-numeric-down'
 import IconDescendingSort from '~icons/bi/sort-numeric-up'
@@ -133,20 +133,20 @@ const toggleSort = (key, _, force = false) => {
 }
 
 const openGraph = (item) => {
-  load(GET_ITEM_HISTORICAL_PRICES, { id: item.id })
+  load(GET_ITEM_HISTORICAL_PRICES_BY_ID, { id: item.id })
 }
 
 const sortOptions = [
   { label: 'Prix moyen 24h', value: 'avg24hPrice' },
   { label: 'Variation du prix dernières 48h', value: 'changeLast48h' },
-  { label: 'La Toubib pour vendre', value: 'La Toubib:sell' },
+  { label: 'Therapist pour vendre', value: 'Therapist:sell' },
   { label: 'Jaeger pour vendre', value: 'Jaeger:sell' },
   { label: 'Peacekeeper pour vendre', value: 'Peacekeeper:sell' },
   { label: 'Ragman pour vendre', value: 'Ragman:sell' },
   { label: 'Fence pour vendre', value: 'Fence:sell' },
   { label: 'Skier pour vendre', value: 'Skier:sell' },
   { label: 'Prapor pour vendre', value: 'Prapor:sell' },
-  { label: 'La Toubib pour acheter', value: 'La Toubib:buy' },
+  { label: 'Therapist pour acheter', value: 'Therapist:buy' },
   { label: 'Jaeger pour acheter', value: 'Jaeger:buy' },
   { label: 'Peacekeeper pour acheter', value: 'Peacekeeper:buy' },
   { label: 'Ragman pour acheter', value: 'Ragman:buy' },

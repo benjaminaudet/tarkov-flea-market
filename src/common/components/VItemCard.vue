@@ -57,7 +57,6 @@ const getCurrencyCharacter = (currency: string) => {
       return '₽'
   }
 }
-
 </script>
 
 <template>
@@ -94,8 +93,10 @@ const getCurrencyCharacter = (currency: string) => {
           {{ item.name }}
         </div>
       </template>
-      <n-tabs :on-update:value="handleChange" :value="activeTab" type="line" size="small" :tabs-padding="20"
-        class="mb-4">
+      <n-tabs
+        :on-update:value="handleChange" :value="activeTab" type="line" size="small" :tabs-padding="20"
+        class="mb-4"
+      >
         <n-tab name="tradersSell">
           Prix Traders pour vendre
         </n-tab>
@@ -113,8 +114,10 @@ const getCurrencyCharacter = (currency: string) => {
               Prix moyen 24h
             </n-tag>
             <n-tag :bordered="false" type="success" class="bold rounded-l-none w-[50%]">
-              <n-number-animation ref="numberAnimationInstRef" :duration="300" show-separator :from="0"
-                :to="item.avg24hPrice" />
+              <n-number-animation
+                ref="numberAnimationInstRef" :duration="300" show-separator :from="0"
+                :to="item.avg24hPrice"
+              />
               ₽
             </n-tag>
           </n-gi>
@@ -123,8 +126,10 @@ const getCurrencyCharacter = (currency: string) => {
           Variation prix 48h
         </n-tag>
         <n-tag :bordered="false" type="success" class="bold rounded-l-none w-[50%]">
-          <n-number-animation ref="numberAnimationInstRef" :duration="300" show-separator :from="0"
-            :to="item.changeLast48h" />
+          <n-number-animation
+            ref="numberAnimationInstRef" :duration="300" show-separator :from="0"
+            :to="item.changeLast48h"
+          />
           ₽
         </n-tag>
       </div>
@@ -134,8 +139,10 @@ const getCurrencyCharacter = (currency: string) => {
             Prix moyen Flea Market 24h
           </n-tag>
           <n-tag :bordered="false" type="success" class="bold rounded-l-none w-[50%]">
-            <n-number-animation ref="numberAnimationInstRef" :duration="300" show-separator :from="0"
-              :to="item.avg24hPrice" />
+            <n-number-animation
+              ref="numberAnimationInstRef" :duration="300" show-separator :from="0"
+              :to="item.avg24hPrice"
+            />
             ₽
           </n-tag>
         </div>
@@ -145,8 +152,10 @@ const getCurrencyCharacter = (currency: string) => {
               {{ trader?.vendor?.name }}
             </n-tag>
             <n-tag :bordered="false" type="success" class="bold rounded-l-none rounded-r-none w-[50%] text-center">
-              <n-number-animation ref="numberAnimationInstRef" :duration="300" show-separator :from="0"
-                :to="trader?.price || 0" />
+              <n-number-animation
+                ref="numberAnimationInstRef" :duration="300" show-separator :from="0"
+                :to="trader?.price || 0"
+              />
               {{ getCurrencyCharacter(trader?.currency) }}
             </n-tag>
           </n-gi>
@@ -158,8 +167,10 @@ const getCurrencyCharacter = (currency: string) => {
             Prix moyen Flea Market 24h
           </n-tag>
           <n-tag :bordered="false" type="warning" class="bold rounded-l-none w-[50%]">
-            <n-number-animation ref="numberAnimationInstRef" :duration="300" show-separator :from="0"
-              :to="item.avg24hPrice" />
+            <n-number-animation
+              ref="numberAnimationInstRef" :duration="300" show-separator :from="0"
+              :to="item.avg24hPrice"
+            />
             ₽
           </n-tag>
         </div>
@@ -169,8 +180,10 @@ const getCurrencyCharacter = (currency: string) => {
               {{ trader?.vendor?.name }}
             </n-tag>
             <n-tag :bordered="false" type="warning" class="bold rounded-l-none w-[50%] text-center">
-              <n-number-animation ref="numberAnimationInstRef" :duration="300" show-separator :from="0"
-                :to="trader?.price" />
+              <n-number-animation
+                ref="numberAnimationInstRef" :duration="300" show-separator :from="0"
+                :to="trader?.price"
+              />
               {{ getCurrencyCharacter(trader?.currency) }}
             </n-tag>
           </n-gi>
@@ -179,9 +192,8 @@ const getCurrencyCharacter = (currency: string) => {
       <VButton>
         <a :href="item.wikiLink" target="_blank">Page Wiki</a>
       </VButton>
-      <VButton @click="openGraph(item)" disabled>
+      <VButton @click="openGraph(item)">
         <a>Graphique prix moyen hebdomadaire</a>
-        <IconWIP class="inline ml-2 text-[0.6rem]"></IconWIP>
       </VButton>
     </n-card>
   </n-space>

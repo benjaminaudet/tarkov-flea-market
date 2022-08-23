@@ -13,6 +13,8 @@ const props = defineProps({
   openGraph: Function,
 })
 
+const { t } = useI18n()
+
 const DEFAULT_TAB_ACTIVE = 'tradersSell'
 const activeTab = ref(DEFAULT_TAB_ACTIVE)
 const sellFor = ref([])
@@ -98,20 +100,20 @@ const getCurrencyCharacter = (currency: string) => {
         class="mb-4"
       >
         <n-tab name="tradersSell">
-          Prix Traders pour vendre
+          {{ t('tabs.traders-sell') }}
         </n-tab>
         <n-tab name="tradersBuy" :disabled="buyFor.length < 1">
-          Prix Traders pour acheter
+          {{ t('tabs.traders-buy') }}
         </n-tab>
         <n-tab name="flea" class="active:text-teal-400">
-          Flea Info
+          {{ t('tabs.flea-info') }}
         </n-tab>
       </n-tabs>
       <div v-if="activeTab === 'flea'">
         <n-grid x-gap="12" y-gap="12" cols="1">
           <n-gi class="text-left">
             <n-tag :bordered="false" class="rounded-r-none w-[50%]">
-              Prix moyen 24h
+              {{ t('label.avg-24h-price-flea') }}
             </n-tag>
             <n-tag :bordered="false" type="success" class="bold rounded-l-none w-[50%]">
               <n-number-animation
@@ -123,7 +125,7 @@ const getCurrencyCharacter = (currency: string) => {
           </n-gi>
         </n-grid>
         <n-tag :bordered="false" class="rounded-r-none  w-[50%]">
-          Variation prix 48h
+          {{ t('label.variation-price-flea') }}
         </n-tag>
         <n-tag :bordered="false" type="success" class="bold rounded-l-none w-[50%]">
           <n-number-animation
@@ -136,7 +138,7 @@ const getCurrencyCharacter = (currency: string) => {
       <div v-else-if="activeTab === 'tradersSell'">
         <div class="mb-[12px]">
           <n-tag :bordered="false" class="rounded-r-none w-[50%]">
-            Prix moyen Flea Market 24h
+            {{ t('label.avg-24h-price-flea') }}
           </n-tag>
           <n-tag :bordered="false" type="success" class="bold rounded-l-none w-[50%]">
             <n-number-animation
@@ -164,7 +166,7 @@ const getCurrencyCharacter = (currency: string) => {
       <div v-else-if="activeTab === 'tradersBuy'">
         <div class="mb-[12px]">
           <n-tag :bordered="false" class="rounded-r-none w-[50%]">
-            Prix moyen Flea Market 24h
+            {{ t('label.avg-24h-price-flea') }}
           </n-tag>
           <n-tag :bordered="false" type="warning" class="bold rounded-l-none w-[50%]">
             <n-number-animation
@@ -190,10 +192,10 @@ const getCurrencyCharacter = (currency: string) => {
         </n-grid>
       </div>
       <VButton>
-        <a :href="item.wikiLink" target="_blank">Page Wiki</a>
+        <a :href="item.wikiLink" target="_blank">{{ t('button.wiki') }}</a>
       </VButton>
       <VButton @click="openGraph(item)">
-        <a>Graphique prix moyen hebdomadaire</a>
+        <a>{{ t('button.graphic-weekly-avg-price') }}</a>
       </VButton>
     </n-card>
   </n-space>

@@ -5,10 +5,12 @@ import { vScroll } from '@vueuse/components'
 import colors from 'tailwindcss/colors'
 import { useLoadingBar } from 'naive-ui'
 import { GChart } from 'vue-google-charts'
-import { GET_ITEM_HISTORICAL_PRICES_BY_ID, useGetItemHistoricalPricesQuery, useGetItemsQuery } from '~/common/services/useGetItems.query'
+import { GET_ITEM_HISTORICAL_PRICES_BY_ID, useGetItemHistoricalPricesQuery, useGetItemsCategoriesQuery, useGetItemsQuery } from '~/common/services/useGetItems.query'
 
 import IconAscendingSort from '~icons/bi/sort-numeric-down'
 import IconDescendingSort from '~icons/bi/sort-numeric-up'
+
+const { t, locale, availableLocales } = useI18n()
 
 let lang = 'en'
 const router = useRouter()
@@ -21,13 +23,16 @@ else {
       lang = router.currentRoute.value.fullPath.replace('/', '')
   })
 }
+locale.value = lang
 
 const { result, loading, error } = useGetItemsQuery(lang)
+const { resultItemsCategories } = useGetItemsCategoriesQuery(lang)
 const { load, resultHistoricalPrices } = useGetItemHistoricalPricesQuery()
+
 const loadingBar = useLoadingBar()
 loadingBar.start()
 
-const DEFAULT_PAGE_INDEX = 20
+const DEFAULT_PAGE_INDEX = 8
 const pageIndex = ref(DEFAULT_PAGE_INDEX)
 const searchInput = ref('')
 const searchInputDebounced = refDebounced(searchInput, 500) // fire finished
@@ -42,21 +47,8 @@ const globalActiveTab = ref('default')
 const active = ref(false)
 const itemDetails = ref({})
 const itemDetailsHistoricalPrices = ref([])
-
-const onScroll = (state: UseScrollReturn) => {
-  if (state.arrivedState.bottom)
-    increasePageIndex()
-}
-
-// Routing
-
-// Internationalization
-const { t } = useI18n()
-const timestamp = ref(1183135260000)
-
-const increasePageIndex = () => {
-  pageIndex.value += DEFAULT_PAGE_INDEX
-}
+const filterButtons = ref([])
+const selectedCategory = ref('')
 
 watch(searchInputDebouncedLoading, () => {
   loadingBar.start()
@@ -75,11 +67,10 @@ watch(searchInputDebounced, () => {
   toggleSort(sortType.value, null, false)
 })
 
-const watchSafe = (toWatch, cb) => {
+const watchSafe = (toWatch: ref<any>, cb: Function) => {
   watch(toWatch, () => {
     if (!toWatch.value)
       return
-
     cb()
   })
 }
@@ -91,9 +82,24 @@ watchSafe(result, () => {
 })
 
 watchSafe(resultHistoricalPrices, () => {
+  loadingBar.finish()
   itemDetails.value = resultHistoricalPrices.value.item
   itemDetailsHistoricalPrices.value = [...resultHistoricalPrices.value.item.historicalPrices.map(el => [new Date(parseInt(el.timestamp)), el.price])]
   active.value = true
+})
+
+watchSafe(resultItemsCategories, () => {
+  filterButtons.value = resultItemsCategories.value.itemCategories.map((f) => {
+    return {
+      ...f,
+      value: f.normalizedName,
+      label: f.name,
+      children: f.children.map((c) => {
+        return { ...c, value: c.normalizedName, label: c.name }
+      }),
+    }
+  })
+  filterButtons.value = filterButtons.value.filter(f => f.children.length > 0)
 })
 
 const sortByTraderToBuy = (key: string) => {
@@ -120,6 +126,14 @@ const sortByTraderToSell = (key: string) => {
   })
 }
 
+const filterByCategory = (categoryNormalizedName: string) => {
+  dataToUse.value = data.value.filter((el) => {
+    return el.category.normalizedName === categoryNormalizedName || el.category.parent.normalizedName === categoryNormalizedName
+  })
+  sort('avg24hPrice')
+  scrollItemsToTop()
+}
+
 const sort = (key: string) => {
   globalActiveTab.value = 'default'
   dataToUse.value = dataToUse.value.sort((a, b) =>
@@ -127,8 +141,9 @@ const sort = (key: string) => {
   )
 }
 
-const toggleSort = (key, _, force = false) => {
-  dataToUse.value = [...data.value]
+const toggleSort = (key: string, _: any, force = false) => {
+  if (sortOptions.map(s => s.value).includes(sortType.value))
+    dataToUse.value = [...data.value]
   if (key === sortType.value || force)
     sortDirectionAsc.value = !sortDirectionAsc.value
 
@@ -139,15 +154,34 @@ const toggleSort = (key, _, force = false) => {
     sortByTraderToSell(key.split(':')[0])
   else if (key.includes('buy'))
     sortByTraderToBuy(key.split(':')[0])
+  scrollItemsToTop()
 }
 
-const openGraph = (item) => {
+const openGraph = (item: Object) => {
+  if (item.id === itemDetails.value.id) {
+    active.value = true
+    return
+  }
+  loadingBar.start()
   load(GET_ITEM_HISTORICAL_PRICES_BY_ID, { id: item.id })
 }
 
+const increasePageIndex = () => {
+  pageIndex.value += DEFAULT_PAGE_INDEX
+}
+
+const scrollItemsToTop = () => {
+  document.querySelector('#items').scrollTop = 0
+}
+
+const onScroll = (state: UseScrollReturn) => {
+  if (state.arrivedState.bottom)
+    increasePageIndex()
+}
+
 const sortOptions = [
-  { label: 'Prix moyen 24h', value: 'avg24hPrice' },
-  { label: 'Variation du prix dernières 48h', value: 'changeLast48h' },
+  { label: t('label.avg-24h-price-flea'), value: 'avg24hPrice' },
+  { label: t('label.variation-price-flea'), value: 'changeLast48h' },
   { label: 'Therapist pour vendre', value: 'Therapist:sell' },
   { label: 'Jaeger pour vendre', value: 'Jaeger:sell' },
   { label: 'Peacekeeper pour vendre', value: 'Peacekeeper:sell' },
@@ -166,14 +200,12 @@ const sortOptions = [
 
 <template>
   <div>
-    <n-loading-bar-provider>
-      <content />
-    </n-loading-bar-provider>
+    <n-loading-bar-provider />
     <div>
       <div v-if="loading">
         <div>
           <n-space vertical>
-            <n-input v-model:value.lazy="searchInput" type="text" placeholder="Search..." />
+            <n-input v-model:value.lazy="searchInput" type="text" :placeholder="t('label.search')" />
             <n-grid x-gap="12" y-gap="12" cols="2">
               <n-gi>
                 <n-select
@@ -190,7 +222,7 @@ const sortOptions = [
               </n-gi>
               <n-gi>
                 <n-button class="w-[100%]" @click="toggleSort(sortType, null, true)">
-                  {{ sortDirectionAsc ? 'Croissant' : 'Décroissant' }}
+                  {{ sortDirectionAsc ? t('button.descending') : t('button.ascending') }}
                 </n-button>
               </n-gi>
             </n-grid>
@@ -210,12 +242,12 @@ const sortOptions = [
       </div>
       <div>
         <n-space vertical>
-          <n-input v-model:value.lazy="searchInput" type="text" placeholder="Search..." />
+          <n-input v-model:value.lazy="searchInput" type="text" :placeholder="t('label.search')" />
           <n-grid x-gap="12" y-gap="12" cols="2">
             <n-gi>
               <n-select
                 filterable placeholder="Choisir un filtre" :options="sortOptions" class="w-[100%]"
-                :default-value="avg24hPrice" @update:value="toggleSort"
+                default-value="avg24hPrice" @update:value="toggleSort"
               >
                 <template #arrow>
                   <transition name="slide-left">
@@ -227,17 +259,30 @@ const sortOptions = [
             </n-gi>
             <n-gi>
               <n-button class="w-[100%]" @click="toggleSort(sortType, true)">
-                {{ sortDirectionAsc ? 'Croissant' : 'Décroissant' }}
+                {{ sortDirectionAsc ? t('button.descending') : t('button.ascending') }}
               </n-button>
             </n-gi>
           </n-grid>
+          <n-cascader
+            v-model:value="selectedCategory"
+            placeholder="Category"
+            clearable
+            :options="filterButtons"
+            :cascade="true"
+            check-strategy="child"
+            :show-path="true"
+            :filterable="true"
+            :clear-filter-after-select="true"
+            @update:value="filterByCategory"
+          />
           <n-back-top
             :listen-to="target" :bottom="220" :visibility-height="10" :style="{
               transition: 'all .3s cubic-bezier(.4, 0, .2, 1)',
             }"
           />
           <n-grid
-            v-if="dataToUse" ref="" v-scroll="onScroll" class="overflow-y-scroll h-[100vh] pr-2" x-gap="12"
+            v-if="dataToUse"
+            id="items" ref="" v-scroll="onScroll" class="overflow-y-scroll h-[100vh] pr-2" x-gap="12"
             y-gap="12" cols="5 xs:1 s:1 m:1 l:2 xl:3 2xl:4 3xl:4" responsive="screen"
           >
             <n-gi v-for="item in dataToUse?.slice(0, pageIndex)" :key="item.id">

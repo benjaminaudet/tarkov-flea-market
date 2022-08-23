@@ -1,0 +1,14 @@
+button:
+  wiki: Page Wiki
+  graphic-weekly-avg-price: Graphique prix moyen hebdomadaire
+  ascending: Tri croissant
+  descending: Tri décroissant
+label:
+  search: Rechercher...
+  avg-24h-price-flea: Prix moyen 24h Flea Market
+  variation-price-flea: Variation du prix sur 48h Flea Market
+tabs:
+  traders-sell: Prix marchands pour vendre
+  traders-buy: Prix marchands pour acheter
+  flea-info: Infos Flea
+not-found: Not found

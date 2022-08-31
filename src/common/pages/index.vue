@@ -10,13 +10,11 @@ import { GET_ITEM_HISTORICAL_PRICES_BY_ID, useGetItemHistoricalPricesQuery, useG
 import IconAscendingSort from '~icons/bi/sort-numeric-down'
 import IconDescendingSort from '~icons/bi/sort-numeric-up'
 
-import { useLocaleStore } from '~/common/stores/locale'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const loadingBar = useLoadingBar()
 loadingBar.start()
 
-const { locale } = useLocaleStore();
 
 const lang = ref(locale)
 

@@ -3,10 +3,6 @@ import { darkTheme } from 'naive-ui'
 import { ApolloClients } from '@vue/apollo-composable'
 import { apolloClient } from './common/ApolloClient'
 
-import { useLocaleStore } from '~/common/stores/locale'
-
-const { setLocale } = useLocaleStore();
-
 provide(ApolloClients, {
   default: apolloClient,
 })
@@ -34,7 +30,6 @@ if (!router.currentRoute.value.query.lang) {
 } else {
   ['cz', 'de', 'en', 'es', 'fr', 'hu', 'ru', 'tr', 'zh'].forEach((_lang) => {
     if (router.currentRoute.value.query.lang?.includes(`${_lang}`)) {
-      setLocale(_lang);
       locale.value = _lang
     }
   })

@@ -69,7 +69,7 @@ export const GET_ITEMS = (lang = 'en') => gql`
 `
 
 export function useGetItemsQuery(lang = 'en') {
-  const { result, loading, error } = useQuery(GET_ITEMS(lang), { lang })
+  const { result, loading, error } = useQuery(GET_ITEMS(lang), { lang }, {fetchPolicy: 'cache-first'})
 
   return { result, loading, error }
 }

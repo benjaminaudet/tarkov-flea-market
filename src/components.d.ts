@@ -17,6 +17,8 @@ declare module '@vue/runtime-core' {
     Footer: typeof import('./common/components/Footer.vue')['default']
     Icon: typeof import('~icons/ic/on')['default']
     IconAccountBox: typeof import('~icons/ic/on-account-box')['default']
+    IconAscendingSort: typeof import('~icons/ic/on-ascending-sort')['default']
+    IconDescendingSort: typeof import('~icons/ic/on-descending-sort')['default']
     NBackTop: typeof import('naive-ui')['NBackTop']
     NButton: typeof import('naive-ui')['NButton']
     NCard: typeof import('naive-ui')['NCard']

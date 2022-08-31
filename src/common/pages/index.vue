@@ -9,52 +9,60 @@ import { GET_ITEM_HISTORICAL_PRICES_BY_ID, useGetItemHistoricalPricesQuery, useG
 
 import IconAscendingSort from '~icons/bi/sort-numeric-down'
 import IconDescendingSort from '~icons/bi/sort-numeric-up'
+import { useItemsStore } from '~/common/stores/items'
+import { storeToRefs } from 'pinia'
 
 
 const { t, locale } = useI18n()
 const loadingBar = useLoadingBar()
 loadingBar.start()
 
+const itemsStore = useItemsStore()
 
-const lang = ref(locale)
+const { items } = storeToRefs(itemsStore)
+itemsStore.getItems()
+console.log(itemsStore.items)
 
-const { result, loading, error } = useGetItemsQuery(lang.value)
-const { resultItemsCategories } = useGetItemsCategoriesQuery(lang.value)
+const lang = $ref(locale)
+
+// const { result, loading, error } = useGetItemsQuery(lang)
+const { result, loading, error } = { result: [], loading: false, error: false}
+const { resultItemsCategories } = useGetItemsCategoriesQuery(lang)
 const { load, resultHistoricalPrices } = useGetItemHistoricalPricesQuery()
 
 const DEFAULT_PAGE_INDEX = 8
-const pageIndex = ref(DEFAULT_PAGE_INDEX)
-const searchInput = ref('')
+const pageIndex = $ref(DEFAULT_PAGE_INDEX)
+const searchInput = $ref('')
 const searchInputDebounced = refDebounced(searchInput, 500) // fire finished
 const searchInputDebouncedLoading = refDebounced(searchInput, 50) // fire loading
-const data = ref([])
-const dataToUse = ref([])
-const sortDirectionAsc = ref(false)
-const sortType = ref('avg24hPrice')
-const scrollContainerRef = ref<HTMLElement | undefined>(undefined)
-const target = scrollContainerRef.value
-const globalActiveTab = ref('default')
-const active = ref(false)
-const itemDetails = ref({})
-const itemDetailsHistoricalPrices = ref([])
-const filterButtons = ref([])
-const selectedCategory = ref('')
+const data = $ref(items)
+const dataToUse = $ref([])
+const sortDirectionAsc = $ref(false)
+const sortType = $ref('avg24hPrice')
+const scrollContainerRef = $ref<HTMLElement | undefined>(undefined)
+const target = scrollContainerRef
+const globalActiveTab = $ref('default')
+const active = $ref(false)
+const itemDetails = $ref({})
+const itemDetailsHistoricalPrices = $ref([])
+const filterButtons = $ref([])
+const selectedCategory = $ref('')
 
 watch(searchInputDebouncedLoading, () => {
   loadingBar.start()
 })
 
 watch(searchInputDebounced, () => {
-  if (searchInput.value === '') {
-    data.value = result.value.items
+  if (searchInput === '') {
+    data = result.value.items
   }
   else {
-    data.value = result.value.items.filter(a =>
-      a.name.toLowerCase().replace(' ', '').replace('-', '').includes(searchInput.value.toLowerCase().replace(' ', '').replace('-', '')),
+    data = result.value.items.filter(a =>
+      a.name.toLowerCase().replace(' ', '').replace('-', '').includes(searchInput.toLowerCase().replace(' ', '').replace('-', '')),
     )
   }
   loadingBar.finish()
-  toggleSort(sortType.value, null, false)
+  toggleSort(sortType, null, false)
 })
 
 const watchSafe = (toWatch: ref<any>, cb: Function) => {
@@ -65,21 +73,22 @@ const watchSafe = (toWatch: ref<any>, cb: Function) => {
   })
 }
 
-watchSafe(result, () => {
+watchSafe(items, () => {
   loadingBar.finish()
-  data.value = result.value.items
+  data = itemsStore.items
   toggleSort('avg24hPrice', null, false)
 })
 
 watchSafe(resultHistoricalPrices, () => {
+  console.log(resultHistoricalPrices)
   loadingBar.finish()
-  itemDetails.value = resultHistoricalPrices.value.item
-  itemDetailsHistoricalPrices.value = [...resultHistoricalPrices.value.item.historicalPrices.map(el => [new Date(parseInt(el.timestamp)), el.price])]
-  active.value = true
+  itemDetails = resultHistoricalPrices.value.item
+  itemDetailsHistoricalPrices = [...resultHistoricalPrices.value.item.historicalPrices.map(el => [new Date(parseInt(el.timestamp)), el.price])]
+  active = true
 })
 
 watchSafe(resultItemsCategories, () => {
-  filterButtons.value = resultItemsCategories.value.itemCategories.map((f) => {
+  filterButtons = resultItemsCategories.value.itemCategories.map((f) => {
     return {
       ...f,
       value: f.normalizedName,
@@ -89,35 +98,35 @@ watchSafe(resultItemsCategories, () => {
       }),
     }
   })
-  filterButtons.value = filterButtons.value.filter(f => f.children.length > 0)
+  filterButtons = filterButtons.filter(f => f.children.length > 0)
 })
 
 const sortByTraderToBuy = (key: string) => {
-  globalActiveTab.value = 'tradersBuy'
-  dataToUse.value = dataToUse.value.filter((el) => {
+  globalActiveTab = 'tradersBuy'
+  dataToUse = dataToUse.filter((el) => {
     return el.buyFor.find(_el => _el.vendor.name === key)
   })
-  dataToUse.value = dataToUse.value.sort((a, b) => {
+  dataToUse = dataToUse.sort((a, b) => {
     const _a = a?.buyFor?.find(_el => _el?.vendor?.name === key)?.priceRUB
     const _b = b?.buyFor?.find(_el => _el?.vendor?.name === key)?.priceRUB
-    return sortDirectionAsc.value ? _b - _a : _a - _b
+    return sortDirectionAsc ? _b - _a : _a - _b
   })
 }
 
 const sortByTraderToSell = (key: string) => {
-  globalActiveTab.value = 'tradersSell'
-  dataToUse.value = dataToUse.value.filter((el) => {
+  globalActiveTab = 'tradersSell'
+  dataToUse = dataToUse.filter((el) => {
     return el.sellFor.find(_el => _el.vendor.name === key)
   })
-  dataToUse.value = dataToUse.value.sort((a, b) => {
+  dataToUse = dataToUse.sort((a, b) => {
     const _a = a?.sellFor?.find(_el => _el?.vendor?.name === key)?.priceRUB
     const _b = b?.sellFor?.find(_el => _el?.vendor?.name === key)?.priceRUB
-    return sortDirectionAsc.value ? _b - _a : _a - _b
+    return sortDirectionAsc ? _b - _a : _a - _b
   })
 }
 
 const filterByCategory = (categoryNormalizedName: string) => {
-  dataToUse.value = data.value.filter((el) => {
+  dataToUse = data.filter((el) => {
     return el.category.normalizedName === categoryNormalizedName || el.category.parent.normalizedName === categoryNormalizedName
   })
   sort('avg24hPrice')
@@ -125,19 +134,19 @@ const filterByCategory = (categoryNormalizedName: string) => {
 }
 
 const sort = (key: string) => {
-  globalActiveTab.value = 'default'
-  dataToUse.value = dataToUse.value.sort((a, b) =>
-    sortDirectionAsc.value ? b[key] - a[key] : a[key] - b[key],
+  globalActiveTab = 'default'
+  dataToUse = dataToUse.sort((a, b) =>
+    sortDirectionAsc ? b[key] - a[key] : a[key] - b[key],
   )
 }
 
 const toggleSort = (key: string, _: any, force = false) => {
-  if (sortOptions.map(s => s.value).includes(sortType.value))
-    dataToUse.value = [...data.value]
-  if (key === sortType.value || force)
-    sortDirectionAsc.value = !sortDirectionAsc.value
+  if (sortOptions.map(s => s.value).includes(sortType))
+    dataToUse = [...data]
+  if (key === sortType || force)
+    sortDirectionAsc = !sortDirectionAsc
 
-  sortType.value = key
+  sortType = key
   if (['avg24hPrice', 'changeLast48h'].includes(key))
     sort(key.split(':')[0])
   else if (key.includes('sell'))
@@ -148,8 +157,9 @@ const toggleSort = (key: string, _: any, force = false) => {
 }
 
 const openGraph = (item: Object) => {
-  if (item.id === itemDetails.value.id) {
-    active.value = true
+  console.log(item)
+  if (item.id === itemDetails?.id) {
+    active = true
     return
   }
   loadingBar.start()
@@ -157,7 +167,7 @@ const openGraph = (item: Object) => {
 }
 
 const increasePageIndex = () => {
-  pageIndex.value += DEFAULT_PAGE_INDEX
+  pageIndex += DEFAULT_PAGE_INDEX
 }
 
 const scrollItemsToTop = () => {
@@ -186,6 +196,9 @@ const sortOptions = [
   { label: 'Skier pour acheter', value: 'Skier:buy' },
   { label: 'Prapor pour acheter', value: 'Prapor:buy' },
 ]
+
+const test = () => console.log(itemsStore.items)
+
 </script>
 
 <template>
@@ -244,7 +257,7 @@ const sortOptions = [
               </n-select>
             </n-gi>
             <n-gi>
-              <n-button class="w-[100%]" @click="toggleSort(sortType, true)">
+              <n-button class="w-[100%]" @click="test">
                 {{ sortDirectionAsc ? t('button.descending') : t('button.ascending') }}
               </n-button>
             </n-gi>

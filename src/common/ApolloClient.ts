@@ -1,7 +1,13 @@
 import { ApolloClient, InMemoryCache, createHttpLink } from '@apollo/client'
+import { persistCache, LocalStorageWrapper } from 'apollo3-cache-persist';
 
 // Cache implementation
 const cache = new InMemoryCache()
+
+await persistCache({
+  cache,
+  storage: new LocalStorageWrapper(window.localStorage),
+});
 
 // HTTP connection to the API
 const httpLink = createHttpLink({

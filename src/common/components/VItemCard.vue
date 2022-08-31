@@ -1,10 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useElementVisibility } from '@vueuse/core'
 import _ from 'lodash'
-
-import colors from 'tailwindcss/colors'
-import IconWIP from '~icons/wpf/maintenance'
 
 const props = defineProps({
   item: Object,
@@ -13,6 +8,8 @@ const props = defineProps({
   openGraph: Function,
 })
 
+const router = useRouter();
+const route = useRoute();
 const { t } = useI18n()
 
 const DEFAULT_TAB_ACTIVE = 'tradersSell'
@@ -34,14 +31,6 @@ if (props?.globalActiveTab !== 'default')
   activeTab.value = props?.globalActiveTab
 else
   activeTab.value = DEFAULT_TAB_ACTIVE
-
-const getSellForObjectByTrader = (trader) => {
-  return sellFor.value.find(el => el.vendor.name === trader)
-}
-
-const getBuyForObjectByTrader = (trader) => {
-  return props.item.buyFor.find(el => el.vendor.name === trader)
-}
 
 const handleChange = (tab) => {
   activeTab.value = tab
@@ -89,16 +78,16 @@ const getCurrencyCharacter = (currency: string) => {
   <n-space v-else vertical>
     <n-card bg="black">
       <template #header>
-        <img :src="item.gridImageLink" class="object-scale-down h-[20vh]">
+        <router-link :to="`/item/${item.id}`">
+          <img :src="item.gridImageLink" class="object-scale-down h-[20vh]">
 
-        <div class="h-10 text-center">
-          {{ item.name }}
-        </div>
+          <div class="h-10 text-center">
+            {{ item.name }}
+          </div>
+        </router-link>
       </template>
-      <n-tabs
-        :on-update:value="handleChange" :value="activeTab" type="line" size="small" :tabs-padding="20"
-        class="mb-4"
-      >
+      <n-tabs :on-update:value="handleChange" :value="activeTab" type="line" size="small" :tabs-padding="20"
+        class="mb-4">
         <n-tab name="tradersSell">
           {{ t('tabs.traders-sell') }}
         </n-tab>
@@ -116,10 +105,8 @@ const getCurrencyCharacter = (currency: string) => {
               {{ t('label.avg-24h-price-flea') }}
             </n-tag>
             <n-tag :bordered="false" type="success" class="bold rounded-l-none w-[50%]">
-              <n-number-animation
-                ref="numberAnimationInstRef" :duration="300" show-separator :from="0"
-                :to="item.avg24hPrice"
-              />
+              <n-number-animation ref="numberAnimationInstRef" :duration="300" show-separator :from="0"
+                :to="item.avg24hPrice" />
               ₽
             </n-tag>
           </n-gi>
@@ -128,10 +115,8 @@ const getCurrencyCharacter = (currency: string) => {
           {{ t('label.variation-price-flea') }}
         </n-tag>
         <n-tag :bordered="false" type="success" class="bold rounded-l-none w-[50%]">
-          <n-number-animation
-            ref="numberAnimationInstRef" :duration="300" show-separator :from="0"
-            :to="item.changeLast48h"
-          />
+          <n-number-animation ref="numberAnimationInstRef" :duration="300" show-separator :from="0"
+            :to="item.changeLast48h" />
           ₽
         </n-tag>
       </div>
@@ -141,10 +126,8 @@ const getCurrencyCharacter = (currency: string) => {
             {{ t('label.avg-24h-price-flea') }}
           </n-tag>
           <n-tag :bordered="false" type="success" class="bold rounded-l-none w-[50%]">
-            <n-number-animation
-              ref="numberAnimationInstRef" :duration="300" show-separator :from="0"
-              :to="item.avg24hPrice"
-            />
+            <n-number-animation ref="numberAnimationInstRef" :duration="300" show-separator :from="0"
+              :to="item.avg24hPrice" />
             ₽
           </n-tag>
         </div>
@@ -154,10 +137,8 @@ const getCurrencyCharacter = (currency: string) => {
               {{ trader?.vendor?.name }}
             </n-tag>
             <n-tag :bordered="false" type="success" class="bold rounded-l-none rounded-r-none w-[50%] text-center">
-              <n-number-animation
-                ref="numberAnimationInstRef" :duration="300" show-separator :from="0"
-                :to="trader?.price || 0"
-              />
+              <n-number-animation ref="numberAnimationInstRef" :duration="300" show-separator :from="0"
+                :to="trader?.price || 0" />
               {{ getCurrencyCharacter(trader?.currency) }}
             </n-tag>
           </n-gi>
@@ -169,10 +150,8 @@ const getCurrencyCharacter = (currency: string) => {
             {{ t('label.avg-24h-price-flea') }}
           </n-tag>
           <n-tag :bordered="false" type="warning" class="bold rounded-l-none w-[50%]">
-            <n-number-animation
-              ref="numberAnimationInstRef" :duration="300" show-separator :from="0"
-              :to="item.avg24hPrice"
-            />
+            <n-number-animation ref="numberAnimationInstRef" :duration="300" show-separator :from="0"
+              :to="item.avg24hPrice" />
             ₽
           </n-tag>
         </div>
@@ -182,10 +161,8 @@ const getCurrencyCharacter = (currency: string) => {
               {{ trader?.vendor?.name }}
             </n-tag>
             <n-tag :bordered="false" type="warning" class="bold rounded-l-none w-[50%] text-center">
-              <n-number-animation
-                ref="numberAnimationInstRef" :duration="300" show-separator :from="0"
-                :to="trader?.price"
-              />
+              <n-number-animation ref="numberAnimationInstRef" :duration="300" show-separator :from="0"
+                :to="trader?.price" />
               {{ getCurrencyCharacter(trader?.currency) }}
             </n-tag>
           </n-gi>

@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { darkTheme } from 'naive-ui'
 import { ApolloClients } from '@vue/apollo-composable'
-import { apolloClient } from './common/ApolloClient'
+import { apolloClient } from '~/common/ApolloClient'
+import { useLocaleStore } from '~/common/stores/locale';
 
 provide(ApolloClients, {
   default: apolloClient,
@@ -21,15 +22,22 @@ useHead({
   ],
 })
 
+const localeStore = useLocaleStore()
 const { locale } = useI18n()
+
+const setLocale = (lang) => {
+  localeStore.setLocale(lang)
+  locale.value = lang
+}
 
 const router = useRouter()
 if (!router.currentRoute.value.query.lang) {
   router.push({ path: '', query: { lang: 'en' } })
-  locale.value = 'en'
+  setLocale('en')
 } else {
   ['cz', 'de', 'en', 'es', 'fr', 'hu', 'ru', 'tr', 'zh'].forEach((_lang) => {
     if (router.currentRoute.value.query.lang?.includes(`${_lang}`)) {
+      setLocale(_lang)
       locale.value = _lang
     }
   })
@@ -45,7 +53,6 @@ const refMsgTargetEl = ref<any>()
         <n-notification-provider>
           <n-dialog-provider>
             <router-view />
-            <div ref="refMsgTargetEl" class="app-msg-target" />
           </n-dialog-provider>
         </n-notification-provider>
       </n-message-provider>
